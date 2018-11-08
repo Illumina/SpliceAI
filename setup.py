@@ -4,7 +4,7 @@ from setuptools import setup
 setup(name='spliceai',
       description='SpliceAI: A deep learning-based tool to identify splice variants',
       long_description=io.open('README.md', encoding='utf-8').read(),
-      version='1.0',
+      version='0.1',
       author='Kishore Jaganathan',
       author_email='kishorejaganathan@gmail.com',
       license='GPLv3',
