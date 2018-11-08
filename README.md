@@ -24,4 +24,17 @@ spliceai -I input.vcf -O output.vcf -R genome.fa
 | -------- | ----------- |
 |    -I    | The input file (VCF format) containing the list of variants to be scored |
 |    -O    | The output file (VCF format), the SpliceAI predictions are added to the INFO column |
-|    -R    | Reference genome fasta file  |
+|    -R    | Reference genome fasta file |
+
+### Examples
+
+An example input file and the corresponding output file can be found at `examples/input.vcf` and `examples/output.vcf` respectively.
+
+### FAQ
+
+
+
+### Contact
+
+Kishore Jaganathan: kishorejaganathan@gmail.com
+
