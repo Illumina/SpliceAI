@@ -36,6 +36,8 @@ spliceai -I input.vcf -O output.vcf -R genome.fa [-A annotations.tsv]
 
 |    ID    | Description |
 | -------- | ----------- |
+|  ALT     | Alternate nucleotide |
+|  SYMBOL  | HGNC gene symbol |
 |  DS_AG   | Delta score (acceptor gain) |
 |  DS_AL   | Delta score (acceptor loss) |
 |  DS_DG   | Delta score (donor gain) |
