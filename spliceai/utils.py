@@ -30,7 +30,7 @@ class annotator():
     def get_name_and_strand(self, chrom, pos):
 
         idxs = np.intersect1d(
-                   np.nonzero(self.chroms == 'chr'+chrom)[0],
+                   np.nonzero(self.chroms == chrom)[0],
                    np.intersect1d(np.nonzero(self.tx_starts <= pos)[0],
                    np.nonzero(pos <= self.tx_ends)[0]))
 
