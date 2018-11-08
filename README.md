@@ -1,4 +1,4 @@
-## SpliceAI: A deep learning-based tool to identify splice variants
+SpliceAI: A deep learning-based tool to identify splice variants
 
 ## Table of contents
 
@@ -7,7 +7,7 @@
   * [Examples](#examples)
   * [Contact](#contact)
 
-### Installation
+## Installation
 
 The simplest way to install SpliceAI is through pip:
 ```
@@ -21,7 +21,7 @@ cd SpliceAI
 python setup.py install
 ```
 
-### Usage
+## Usage
 
 SpliceAI can be run from the command line: 
 ```
@@ -33,11 +33,11 @@ spliceai -I input.vcf -O output.vcf -R genome.fa
 |    -O    | The output file (VCF format), the SpliceAI predictions are added to the INFO column |
 |    -R    | Reference genome fasta file |
 
-### Examples
+## Examples
 
 An example input file and the corresponding output file can be found at `examples/input.vcf` and `examples/output.vcf` respectively.
 
-### Contact
+## Contact
 
 Kishore Jaganathan: kishorejaganathan@gmail.com
 
