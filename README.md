@@ -42,10 +42,12 @@ spliceai -I input.vcf -O output.vcf -R genome.fa [-A annotations.tsv]
 |  DS_AL   | Delta score (acceptor loss) |
 |  DS_DG   | Delta score (donor gain) |
 |  DS_DL   | Delta score (donor loss) |
-|  DP_AG   | Delta position (acceptor gain) |
-|  DP_AL   | Delta position (acceptor loss) |
-|  DP_DG   | Delta position (donor gain) |
-|  DP_DL   | Delta position (donor loss) |
+|  DP_AG   | Delta position (acceptor gain) relative to the variant position |
+|  DP_AL   | Delta position (acceptor loss) relative to the variant position |
+|  DP_DG   | Delta position (donor gain) relative to the variant position |
+|  DP_DL   | Delta position (donor loss) relative to the variant position |
+
+Delta scores can have values ranging from 0 to 1, and correspond to the effect size of the variant with respect to altering splicing (values are calculated separately for acceptor gain, acceptor loss, donor gain and donor loss). In the paper, a detailed characterization is provided for threshold values 0.2 (high recall), 0.5 and 0.8 (high precision). Delta positions convey information about the location where splicing changes relative to the variant position (positive and negative values imply the location is to the right and left of the variant respectively). 
 
 For the sake of convenience, we have already calculated the predictions for all possible single nucleotide variants within the genic regions (3.4 billion variants). The results are available [here](https://basespace.illumina.com/s/5u6ThOblecrh).
 
