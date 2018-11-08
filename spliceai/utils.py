@@ -18,10 +18,6 @@ class annotator():
         self.strands = df['STRAND'].get_values()
         self.tx_starts = df['TX_START'].get_values()+1
         self.tx_ends = df['TX_END'].get_values()
-        self.exon_starts = [np.asarray(map(int, re.split(',', c)[:-1]))+1
-                            for c in df['EXON_STARTS'].get_values()]
-        self.exon_ends = [np.asarray(map(int, re.split(',', c)[:-1]))
-                          for c in df['EXON_ENDS'].get_values()]
 
         self.ref_fasta = pyfasta.Fasta(ref_fasta)
 

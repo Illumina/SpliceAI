@@ -33,7 +33,7 @@ spliceai -I input.vcf -O output.vcf -R genome.fa [-A annotations.tsv]
 |    -I    | The input VCF file containing the variants of interest. |
 |    -O    | The output VCF file containing the SpliceAI predictions. The predictions are appended to the INFO column of the input file. Currently, only single nucleotide variants and simple indels (either the ref or alt should be of length 1) are supported. |
 |    -R    | Reference genome fasta file (assembly should be hg19/GRCh37 if -A argument is set to default). |
-|    -A    | A tsv file where the columns correspond to gene name, chromosome, strand, transcription start, transcription end, exon starts and exon ends (default is the hg19/GRCH37 GENCODE.v24lift37 annotations file found at `spliceai/annotations/GENCODE.v24lift37`). |
+|    -A    | A tsv file where the columns correspond to gene name, chromosome, strand, transcription start, transcription end, exon starts and exon ends. This argument is optional, and the default is the hg19/GRCH37 GENCODE.v24lift37 annotations file found at `spliceai/annotations/GENCODE.v24lift37` (use it as a template if providing a custom annotations file). This file is used to identify the start, end, and strands of transcription. |
 
 ## Examples
 
