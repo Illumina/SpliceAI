@@ -1,4 +1,3 @@
-import os
 import argparse
 import vcf
 from spliceai.utils import annotator, get_delta_scores
@@ -6,13 +5,11 @@ from spliceai.utils import annotator, get_delta_scores
 
 def main():
 
-    cwd = os.path.dirname(os.path.realpath(__file__))
-
     parser = argparse.ArgumentParser()
     parser.add_argument('-I')
     parser.add_argument('-O')
     parser.add_argument('-R')
-    parser.add_argument('-A', default=cwd+'/annotations/GENCODE.v24lift37')
+    parser.add_argument('-A')
     args = parser.parse_args()
 
     vcf_reader = vcf.Reader(open(args.I, 'r'))
@@ -28,4 +25,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
