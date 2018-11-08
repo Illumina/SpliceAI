@@ -20,10 +20,6 @@ SpliceAI can be run from the command line:
 ```
 spliceai -I input.vcf -O output.vcf -R genome.fa
 ```
-input.vcf: The input file (VCF format) containing the list of variants to be scored.
-output.vcf: The output file (VCF format), the SpliceAI predictions are added to the INFO column.
-genome.fa: Reference genome fasta file.
-
 | Argument | Description |
 | -------- | ----------- |
 |    -I    | The input file (VCF format) containing the list of variants to be scored |
