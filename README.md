@@ -1,4 +1,4 @@
-SpliceAI: A deep learning-based tool to identify splice variants
+# SpliceAI: A deep learning-based tool to identify splice variants
 
 ## Table of contents
 
