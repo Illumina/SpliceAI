@@ -16,7 +16,7 @@ setup(name='spliceai',
                         'pyvcf>=0.6.8',
                         'numpy>=1.14.0',
                         'pandas>=0.23.0'],
-      extras_require={'gpu': ['tensorflow-gpu>=1.1.0']}
+      extras_require={'gpu': ['tensorflow-gpu>=1.1.0']},
       package_data={'spliceai': ['annotations/GENCODE.v24lift37',
                                  'models/spliceai1.h5',
                                  'models/spliceai2.h5',
