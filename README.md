@@ -1,1 +1,1 @@
-SpliceAI: Predicting splicing from primary sequence with deep learning
+#SpliceAI: A deep learning-based tool to identify splice variants
