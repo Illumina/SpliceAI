@@ -1,6 +1,6 @@
 import argparse
 import sys
-import vcf
+import pysam
 from spliceai.utils import annotator, get_delta_scores
 
 def get_options():
@@ -30,15 +30,17 @@ def get_options():
 def main():
     args = get_options()
 
-    vcf_reader = vcf.Reader(args.vcf)
-    vcf_writer = vcf.Writer(args.out, vcf_reader)
+    vcf = pysam.VariantFile(args.vcf)
+    header = vcf.header
+    header.add_line('##INFO=<ID=SpliceAI,Number=.,Type=String,Description="Splice AI annotation for variant. These include delta scores (DS) for acceptor gain (AG), acceptor loss (AL), donor gain (DG) and donor loss (DL). The distance from the variant site to the splice site is also included (DP). Format: Allele|SYMBOL|DS_AG|DS_AL|DS_DG|DS_DL|DP_AG|DP_AL|DP_DG|DP_DL">')
+    output = pysam.VariantFile(args.out, mode='w', header=header)
     ann = annotator(args.R, args.A)
 
-    for record in vcf_reader:
-
-        delta_scores = get_delta_scores(record, ann)
-        record.add_info('SpliceAI', delta_scores)
-        vcf_writer.write_record(record)
+    for record in vcf:
+        scores = get_delta_scores(record, ann)
+        if len(scores) > 0:
+            record.info['SpliceAI'] = scores
+        output.write(record)
 
 
 if __name__ == '__main__':
