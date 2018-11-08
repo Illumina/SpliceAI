@@ -37,6 +37,13 @@ spliceai -I input.vcf -O output.vcf -R genome.fa [-A annotations.tsv]
 |    ID    | Description |
 | -------- | ----------- |
 |  DS_AG   | Delta score (acceptor gain) |
+|  DS_AL   | Delta score (acceptor loss) |
+|  DS_DG   | Delta score (donor gain) |
+|  DS_DL   | Delta score (donor loss) |
+|  DP_AG   | Delta position (acceptor gain) |
+|  DP_AL   | Delta position (acceptor loss) |
+|  DP_DG   | Delta position (donor gain) |
+|  DP_DL   | Delta position (donor loss) |
 
 For the sake of convenience, we have already calculated the predictions for all possible single nucleotide variants within the genic regions (3.4 billion variants). The results are available [here](https://basespace.illumina.com/s/5u6ThOblecrh).
 
