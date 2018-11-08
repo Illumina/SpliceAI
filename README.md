@@ -24,8 +24,8 @@ input.vcf: The input file (VCF format) containing the list of variants to be sco
 output.vcf: The output file (VCF format), the SpliceAI predictions are added to the INFO column.
 genome.fa: Reference genome fasta file.
 
-| First Header  | Second Header |
-| ------------- | ------------- |
-| Content Cell  | The input file (VCF format) containing the list of variants to be scored  |
-| Content Cell  | The output file (VCF format), the SpliceAI predictions are added to the INFO column  |
-| Content Cell  | Reference genome fasta file  |
+| Argument | Description |
+| -------- | ----------- |
+| -I | The input file (VCF format) containing the list of variants to be scored |
+| -O | The output file (VCF format), the SpliceAI predictions are added to the INFO column |
+| -R | Reference genome fasta file  |
