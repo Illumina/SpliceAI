@@ -63,7 +63,7 @@ def one_hot_encode(seq):
     return MAP[np.fromstring(seq, np.int8) % 5]
 
 
-def get_delta_scores(record, ann, L=101):
+def get_delta_scores(record, ann, L=1001):
 
     W = 10000+L
 
