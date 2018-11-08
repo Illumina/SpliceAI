@@ -26,6 +26,6 @@ genome.fa: Reference genome fasta file.
 
 | Argument | Description |
 | -------- | ----------- |
-| -I | The input file (VCF format) containing the list of variants to be scored |
-| -O | The output file (VCF format), the SpliceAI predictions are added to the INFO column |
-| -R | Reference genome fasta file  |
+|    -I    | The input file (VCF format) containing the list of variants to be scored |
+|    -O    | The output file (VCF format), the SpliceAI predictions are added to the INFO column |
+|    -R    | Reference genome fasta file  |
