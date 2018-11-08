@@ -4,6 +4,6 @@
 
 The simplest way to install SpliceAI is through pip:
 
-'''
+```
 pip install spliceai
-'''
+```
