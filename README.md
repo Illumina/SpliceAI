@@ -30,10 +30,6 @@ spliceai -I input.vcf -O output.vcf -R genome.fa
 
 An example input file and the corresponding output file can be found at `examples/input.vcf` and `examples/output.vcf` respectively.
 
-### FAQ
-
-
-
 ### Contact
 
 Kishore Jaganathan: kishorejaganathan@gmail.com
