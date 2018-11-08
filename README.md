@@ -1,5 +1,12 @@
 ## SpliceAI: A deep learning-based tool to identify splice variants
 
+## Table of contents
+
+  * [Installation](#installation)
+  * [Usage](#usage)
+  * [Examples](#examples)
+  * [Contact](#contact)
+
 ### Installation
 
 The simplest way to install SpliceAI is through pip:
@@ -33,4 +40,5 @@ An example input file and the corresponding output file can be found at `example
 ### Contact
 
 Kishore Jaganathan: kishorejaganathan@gmail.com
+
 
