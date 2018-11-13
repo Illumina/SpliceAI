@@ -1,4 +1,5 @@
 # SpliceAI: A deep learning-based tool to identify splice variants
+[![Downloads](https://pepy.tech/badge/spliceai)](https://pepy.tech/project/spliceai) (Downloads since Nov 8th, 2018, via pypi)
 
 ## Table of contents
 
