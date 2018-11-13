@@ -1,28 +1,47 @@
 import argparse
-import vcf
+import sys
+import pysam
 from spliceai.utils import annotator, get_delta_scores
 
-
-def main():
-
+def get_options():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-I')
-    parser.add_argument('-O')
-    parser.add_argument('-R')
-    parser.add_argument('-A')
+    parser.add_argument('I', nargs='?', default=sys.stdin.buffer,
+        help='path to VCF input, defaults to standard in')
+    parser.add_argument('O', nargs='?', default=sys.stdout,
+        help='path to write output VCF to, defaults to standard out.')
+    parser.add_argument('-R', required=True,
+        help='path to genome fasta file (must be fai indexed for quick access)')
+    parser.add_argument('-A',
+        help='path to gencode genes file (defaults to file in package)')
     args = parser.parse_args()
 
-    vcf_reader = vcf.Reader(open(args.I, 'r'))
-    vcf_writer = vcf.Writer(open(args.O, 'w'), vcf_reader)
+    try:
+        args.I = open(args.I, 'rt')
+    except TypeError:
+        pass
+
+    try:
+        args.O = open(args.O, 'wt')
+    except TypeError:
+        pass
+
+    return args
+
+def main():
+    args = get_options()
+
+    vcf = pysam.VariantFile(args.I)
+    header = vcf.header
+    header.add_line('##INFO=<ID=SpliceAI,Number=.,Type=String,Description="Splice AI annotation for variant. These include delta scores (DS) for acceptor gain (AG), acceptor loss (AL), donor gain (DG) and donor loss (DL). The distance from the variant site to the splice site is also included (DP). Format: Allele|SYMBOL|DS_AG|DS_AL|DS_DG|DS_DL|DP_AG|DP_AL|DP_DG|DP_DL">')
+    output = pysam.VariantFile(args.O, mode='w', header=header)
     ann = annotator(args.R, args.A)
 
-    for record in vcf_reader:
-
-        delta_scores = get_delta_scores(record, ann)
-        record.add_info('SpliceAI', delta_scores)
-        vcf_writer.write_record(record)
+    for record in vcf:
+        scores = get_delta_scores(record, ann)
+        if len(scores) > 0:
+            record.info['SpliceAI'] = scores
+        output.write(record)
 
 
 if __name__ == '__main__':
     main()
-

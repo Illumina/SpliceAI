@@ -65,29 +65,30 @@ def get_delta_scores(record, ann, L=1001):
 
     W = 10000+L
 
-    (genes, strands, idxs) = ann.get_name_and_strand(record.CHROM, record.POS)
+    (genes, strands, idxs) = ann.get_name_and_strand(record.chrom, record.pos)
 
     delta_scores = []
 
-    for j in range(len(record.ALT)):
+    for j in range(len(record.alts)):
         for i in range(len(idxs)):
 
-            dist = ann.get_pos_data(idxs[i], record.POS)
+            dist = ann.get_pos_data(idxs[i], record.pos)
 
-            if len(record.REF) > 1 and len(record.ALT[j]) > 1:
+            if len(record.ref) > 1 and len(record.alts[j]) > 1:
+                delta_scores.append("{}|.|.|.|.|.|.|.|.|.".format(record.alts[j]))
                 continue
             # Ignoring complicated INDELs
             
             pad_size = [max(W//2+dist[0], 0), max(W//2-dist[1], 0)]
-            ref_len = len(record.REF)
-            alt_len = len(record.ALT[j])
+            ref_len = len(record.ref)
+            alt_len = len(record.alts[j])
             del_len = max(ref_len-alt_len, 0)
 
-            seq = ann.ref_fasta['chr'+str(record.CHROM)][
-                                record.POS-W//2-1:record.POS+W//2]
+            seq = ann.ref_fasta['chr'+str(record.chrom)][
+                                record.pos-W//2-1:record.pos+W//2]
             x_ref = 'N'*pad_size[0]+seq[pad_size[0]:W-pad_size[1]]\
                      +'N'*pad_size[1]
-            x_alt = x_ref[:W//2]+str(record.ALT[j])+x_ref[W//2+ref_len:]
+            x_alt = x_ref[:W//2]+str(record.alts[j])+x_ref[W//2+ref_len:]
 
             X_ref = one_hot_encode(x_ref)[None, :]
             X_alt = one_hot_encode(x_alt)[None, :]
@@ -133,7 +134,7 @@ def get_delta_scores(record, ann, L=1001):
 
             delta_scores.append(
                 "{}|{}|{:.2f}|{:.2f}|{:.2f}|{:.2f}|{}|{}|{}|{}".format(
-                record.ALT[j],
+                record.alts[j],
                 genes[i],
                 Y[1, idx_pA, 1]-Y[0, idx_pA, 1],
                 Y[0, idx_nA, 1]-Y[1, idx_nA, 1],
