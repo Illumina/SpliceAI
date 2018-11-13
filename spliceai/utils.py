@@ -9,6 +9,7 @@ from keras.models import load_model
 class annotator():
 
     def __init__(self, ref_fasta, annotations):
+
         if annotations is None:
             annotations = resource_filename(__name__, 'annotations/GENCODE.v24lift37')
         df = pd.read_csv(annotations, sep='\t')
