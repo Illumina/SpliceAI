@@ -1,17 +1,17 @@
-import os
 import pandas as pd
 import numpy as np
 import re
+from pkg_resources import resource_filename
 import pyfasta
 from keras.models import load_model
 
 
 class annotator():
 
-    def __init__(self, ref_fasta, gene_annotations):
-
-        cwd = os.path.dirname(os.path.realpath(__file__))
-        df = pd.read_csv(gene_annotations, sep='\t')
+    def __init__(self, ref_fasta, annotations):
+        if annotations is None:
+            annotations = resource_filename(__name__, 'annotations/GENCODE.v24lift37')
+        df = pd.read_csv(annotations, sep='\t')
 
         self.genes = df['#NAME'].get_values()
         self.chroms = df['CHROM'].get_values()
@@ -21,11 +21,8 @@ class annotator():
 
         self.ref_fasta = pyfasta.Fasta(ref_fasta)
 
-        self.models = [load_model(cwd+'/models/spliceai1.h5'),
-                       load_model(cwd+'/models/spliceai2.h5'),
-                       load_model(cwd+'/models/spliceai3.h5'),
-                       load_model(cwd+'/models/spliceai4.h5'),
-                       load_model(cwd+'/models/spliceai5.h5')]
+        paths = ('models/spliceai{}.h5'.format(x) for x in range(1, 6))
+        self.models = [load_model(resource_filename(__name__, x)) for x in paths]
 
     def get_name_and_strand(self, chrom, pos):
 
@@ -147,4 +144,3 @@ def get_delta_scores(record, ann, L=1001):
                 idx_nD-L//2))
 
     return delta_scores
-
