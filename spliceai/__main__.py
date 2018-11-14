@@ -3,13 +3,21 @@ import sys
 import pysam
 from spliceai.utils import annotator, get_delta_scores
 
+# account for python2/python3 differences
+try:
+    from sys.stdin import buffer as std_in
+    from sys.stdout import buffer as std_out
+except ImportError:
+    from sys import stdin as std_in
+    from sys import stdout as std_out
+
 
 def get_options():
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('-I', nargs='?', default=sys.stdin,
+    parser.add_argument('-I', nargs='?', default=std_in,
         help='path to the input VCF file, defaults to standard in')
-    parser.add_argument('-O', nargs='?', default=sys.stdout,
+    parser.add_argument('-O', nargs='?', default=std_out,
         help='path to the output VCF file, defaults to standard out')
     parser.add_argument('-R', required=True,
         help='path to the genome fasta file')
@@ -49,4 +57,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
