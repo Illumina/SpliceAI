@@ -1,7 +1,7 @@
+from pkg_resources import resource_filename
 import pandas as pd
 import numpy as np
 import re
-from pkg_resources import resource_filename
 import pyfasta
 from keras.models import load_model
 
