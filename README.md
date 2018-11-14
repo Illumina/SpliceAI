@@ -55,9 +55,9 @@ For the sake of convenience, we have already calculated the outputs for all poss
 ## Examples
 
 A sample input file and the corresponding output file can be found at `examples/input.vcf` and `examples/output.vcf` respectively. The output `SpliceAI=T|RYR1|0.22|0.00|0.91|0.70|-107|-46|-2|90` for the variant `19:38958362 C>T` can be interpreted as follows:
-1. The probability that the position `19:38958255` is used as a splice acceptor increases by `0.22`.
-2. The probability that the position `19:38958360` is used as a splice donor increases by `0.91`.
-3. The probability that the position `19:38958452` is used as a splice donor increases by `0.70`.
++. The probability that the position `19:38958255` is used as a splice acceptor increases by `0.22`.
++. The probability that the position `19:38958360` is used as a splice donor increases by `0.91`.
++. The probability that the position `19:38958452` is used as a splice donor increases by `0.70`.
 
 ## Contact
 
