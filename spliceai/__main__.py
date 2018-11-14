@@ -3,7 +3,8 @@ import sys
 import pysam
 from spliceai.utils import annotator, get_delta_scores
 
-# account for python2/python3 differences
+
+# Account for python2/python3 differences
 try:
     from sys.stdin import buffer as std_in
     from sys.stdout import buffer as std_out
