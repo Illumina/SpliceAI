@@ -27,7 +27,7 @@ SpliceAI also requires tensorflow>=1.2.0, which in most cases can be installed t
 pip install tensorflow
 ```
 
-Please see [here](https://www.tensorflow.org/install/) for other installation options if this installation method does not work.
+Please see [here](https://www.tensorflow.org/install/) for other TensorFlow installation options.
 
 ## Usage
 
