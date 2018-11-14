@@ -48,7 +48,7 @@ spliceai -I input.vcf -O output.vcf -R genome.fa [-A annotations.tsv]
 |  DP_DG   | Delta position (donor gain) |
 |  DP_DL   | Delta position (donor loss) |
 
-**Delta score** of a variant ranges from 0 to 1, and can be interpreted as the probability of the variant being splice-altering. In the paper, a detailed characterization is provided for 0.2 (high recall), 0.5, and 0.8 (high precision) cutoffs. **Delta position** conveys information about the location where splicing changes relative to the variant position (positive/negative values imply that the location is to the right/left of the variant respectively).
+**Delta score** of a variant ranges from 0 to 1, and can be interpreted as the probability of the variant being splice-altering. In the paper, a detailed characterization is provided for 0.2 (high recall/likely pathogenic), 0.5 (recommended/pathogenic), and 0.8 (high precision/pathogenic) cutoffs. **Delta position** conveys information about the location where splicing changes relative to the variant position (positive/negative values imply that the location is to the right/left of the variant respectively).
 
 For the sake of convenience, we have already calculated the outputs for all possible single nucleotide variants within the genic regions (3.4 billion variants). The results are available [here](https://basespace.illumina.com/s/5u6ThOblecrh).
 
