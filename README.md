@@ -48,13 +48,13 @@ spliceai -I input.vcf -O output.vcf -R genome.fa [-A annotations.tsv]
 |  DP_DG   | Delta position (donor gain) |
 |  DP_DL   | Delta position (donor loss) |
 
-Delta scores can have values ranging from 0 to 1, and correspond to the effect size of the variant with respect to altering splicing (values are calculated separately for acceptor gain, acceptor loss, donor gain and donor loss). In the paper, a detailed characterization is provided for threshold values 0.2 (high recall), 0.5, and 0.8 (high precision). Delta positions convey information about the location where splicing changes relative to the variant position (positive/negative values imply the location is to the right/left of the variant respectively). 
+**Delta score** of a variant ranges from 0 to 1, and can be interpreted as the probability of the variant being splice-altering. In the paper, a detailed characterization is provided for 0.2 (high recall), 0.5, and 0.8 (high precision) cutoffs. **Delta position** conveys information about the location where splicing changes relative to the variant position (positive/negative values imply that the location is to the right/left of the variant respectively).
 
-For the sake of convenience, we have already calculated the predictions for all possible single nucleotide variants within the genic regions (3.4 billion variants). The results are available [here](https://basespace.illumina.com/s/5u6ThOblecrh).
+For the sake of convenience, we have already calculated the outputs for all possible single nucleotide variants within the genic regions (3.4 billion variants). The results are available [here](https://basespace.illumina.com/s/5u6ThOblecrh).
 
 ## Examples
 
-An example input file and the corresponding output file can be found at `examples/input.vcf` and `examples/output.vcf` respectively.
+A sample input file and the corresponding output file can be found at `examples/input.vcf` and `examples/output.vcf` respectively. Consider the variant `19:38958362 C>T` with the output `SpliceAI=T|RYR1|0.22|0.00|0.91|0.70|-107|-46|-2|90`.
 
 ## Contact
 
