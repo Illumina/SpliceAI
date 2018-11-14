@@ -70,6 +70,10 @@ def get_delta_scores(record, ann, L=1001):
     delta_scores = []
 
     for j in range(len(record.alts)):
+
+        if len(idxs) == 0:
+            delta_scores.append("{}|.|.|.|.|.|.|.|.|.".format(record.alts[j]))
+
         for i in range(len(idxs)):
 
             dist = ann.get_pos_data(idxs[i], record.pos)
