@@ -31,7 +31,7 @@ spliceai -I input.vcf -O output.vcf -R genome.fa [-A annotations.tsv]
 | Argument | Description |
 | -------- | ----------- |
 |    -I    | The input VCF file containing the variants of interest. Currently, only single nucleotide variants and simple indels (either the ref or alt length is 1) are scored. |
-|    -O    | The output VCF file containing the SpliceAI predictions. The predictions are appended to the INFO column (`SpliceAI=ALT\|SYMBOL\|DS_AG\|DS_AL\|DS_DG\|DS_DL\|DP_AG\|DP_AL\|DP_DG\|DP_DL`: see the table below for additional details). If a variant belongs to multiple genes, then predictions for each gene are provided separately. Variants which do not belong to any gene are not considered. |
+|    -O    | The output VCF file containing the SpliceAI predictions. The predictions are appended to the INFO column (`SpliceAI=ALT\|SYMBOL\|DS_AG\|DS_AL\|DS_DG\|DS_DL\|DP_AG\|DP_AL\|DP_DG\|DP_DL`: see the table below for additional details). If a variant belongs to multiple genes, then predictions for each gene are provided separately. Variants which do not belong to any gene are not scored. |
 |    -R    | Reference genome fasta file (should be on hg19/GRCh37 if using default -A parameter). |
 |    -A    | A tsv file where the columns correspond to gene name, chromosome, strand, transcription start, and transcription end. This argument is optional, and the default is the hg19/GRCh37 GENCODE.v24lift37 gene annotations file found at `spliceai/annotations/GENCODE.v24lift37` (use it as a template if providing a custom annotations file). |
 
