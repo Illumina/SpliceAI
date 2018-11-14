@@ -22,6 +22,13 @@ cd SpliceAI
 python setup.py install
 ```
 
+SpliceAI also requires tensorflow>=1.2.0, which in most cases can be installed through pip:
+```
+pip install tensorflow
+```
+
+In cases where this does not work, please see [here](https://www.tensorflow.org/install/) for other options.
+
 ## Usage
 
 SpliceAI can be run from the command line: 
