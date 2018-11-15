@@ -8,10 +8,6 @@ The simplest way to install SpliceAI is through pip:
 pip install spliceai
 ```
 
-SpliceAI requires [tensorflow](https://www.tensorflow.org/install/)>=1.2.0,
-which is best installed separately via pip: `pip install tensorflow`. See
-tensorflow website for complete installation options.
-
 Alternately, SpliceAI can be installed from the [github repository](https://github.com/Illumina/SpliceAI.git):
 ```sh
 git clone https://github.com/Illumina/SpliceAI.git
@@ -19,13 +15,17 @@ cd SpliceAI
 python setup.py install
 ```
 
+SpliceAI requires [tensorflow](https://www.tensorflow.org/install/)>=1.2.0,
+which is best installed separately via pip: `pip install tensorflow`. See
+the TensorFlow website for other installation options.
+
 ### Usage
 SpliceAI can be run from the command line:
 ```sh
 spliceai -I input.vcf -O output.vcf -R genome.fa [-A annotations.tsv]
 
 # or you can pipe input and output VCFs
-cat input.vcf | spliceai -R genome.fa > output.vcf
+cat input.vcf | spliceai -R genome.fa [-A annotations.tsv] > output.vcf
 ```
 Options:
  - **-I**: The input VCF with variants of interest. Only SNVs and simple indels
@@ -41,7 +41,7 @@ Options:
   `spliceai/annotations/GENCODE.v24lift37` in repository as template for
   creating custom annotations).
 
-Details of SpliceAI info field:
+Details of SpliceAI INFO field:
 
 |    ID    | Description |
 | -------- | ----------- |
@@ -58,7 +58,7 @@ Details of SpliceAI info field:
 
 **Delta score** of a variant ranges from 0 to 1, and can be interpreted as the probability of the variant being splice-altering. In the paper, a detailed characterization is provided for 0.2 (high recall/likely pathogenic), 0.5 (recommended/pathogenic), and 0.8 (high precision/pathogenic) cutoffs. **Delta position** conveys information about the location where splicing changes relative to the variant position (positive values are upstream of the variant, negative values are downstream).
 
-For the sake of convenience, we have precomputed scores for all possible single nucleotide variants near genes, which are available [here](https://basespace.illumina.com/s/5u6ThOblecrh).
+For the sake of convenience, we have precomputed scores for all possible single nucleotide variants within genes, which are available [here](https://basespace.illumina.com/s/5u6ThOblecrh).
 
 ### Examples
 A sample input file and the corresponding output file can be found at `examples/input.vcf` and `examples/output.vcf` respectively. The output `SpliceAI=T|RYR1|0.22|0.00|0.91|0.70|-107|-46|-2|90` for the variant `19:38958362 C>T` can be interpreted as follows:
