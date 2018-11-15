@@ -24,4 +24,5 @@ setup(name='spliceai',
                                  'models/spliceai3.h5',
                                  'models/spliceai4.h5',
                                  'models/spliceai5.h5']},
-      entry_points={'console_scripts': ['spliceai=spliceai.__main__:main']})
+      entry_points={'console_scripts': ['spliceai=spliceai.__main__:main']},
+      test_suite='tests')
