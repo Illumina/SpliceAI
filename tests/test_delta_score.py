@@ -1,7 +1,7 @@
 from pkg_resources import resource_filename
 import unittest
-
 from spliceai.utils import annotator, get_delta_scores
+
 
 class TestDeltaScore(unittest.TestCase):
     @classmethod
