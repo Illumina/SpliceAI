@@ -24,7 +24,7 @@ SpliceAI can be run from the command line:
 ```sh
 spliceai -I input.vcf -O output.vcf -R genome.fa [-A annotations.tsv]
 
-# or you can pipe input and output VCFs
+# or you can pipe the input and output VCFs
 cat input.vcf | spliceai -R genome.fa [-A annotations.tsv] > output.vcf
 ```
 Options:
