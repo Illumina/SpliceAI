@@ -1,6 +1,6 @@
 ## SpliceAI: A deep learning-based tool to identify splice variants
 This package annotates genetic variants with their predicted effect on splicing,
-as described in [Jaganathan *et al*, Cell 2018 in press](https://URL_FOR_LATER).
+as described in [Jaganathan *et al*, Cell 2019 in press](https://doi.org/10.1016/j.cell.2018.12.015).
 
 ### Installation
 The simplest way to install SpliceAI is through pip:
