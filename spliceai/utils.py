@@ -88,8 +88,13 @@ def get_delta_scores(record, ann, L=1001):
             alt_len = len(record.alts[j])
             del_len = max(ref_len-alt_len, 0)
             
-            seq = ann.ref_fasta[record.chrom][
-                                record.pos-W//2-1:record.pos+W//2]
+            try:
+                seq = ann.ref_fasta[record.chrom][
+                                    record.pos-W//2-1:record.pos+W//2]
+            except:
+                seq = ann.ref_fasta['chr'+str(record.chrom)][
+                                    record.pos-W//2-1:record.pos+W//2]                
+
             x_ref = 'N'*pad_size[0]+seq[pad_size[0]:W-pad_size[1]]\
                      +'N'*pad_size[1]
             x_alt = x_ref[:W//2]+str(record.alts[j])+x_ref[W//2+ref_len:]
