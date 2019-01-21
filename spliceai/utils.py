@@ -87,7 +87,7 @@ def get_delta_scores(record, ann, L=1001):
             ref_len = len(record.ref)
             alt_len = len(record.alts[j])
             del_len = max(ref_len-alt_len, 0)
-            seq = ann.ref_fasta[str(record.chrom)][
+            seq = ann.ref_fasta[record.chrom][
                                 record.pos-W//2-1:record.pos+W//2]
             x_ref = 'N'*pad_size[0]+seq[pad_size[0]:W-pad_size[1]]\
                      +'N'*pad_size[1]
