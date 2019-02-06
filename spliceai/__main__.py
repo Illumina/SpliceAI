@@ -22,8 +22,10 @@ def get_options():
         help='path to the output VCF file, defaults to standard out')
     parser.add_argument('-R', required=True,
         help='path to the genome fasta file')
-    parser.add_argument('-A',
-        help='path to the gene annotations file, defaults to file in package')
+    parser.add_argument('-A', default='grch37',
+        help='gene annotations dataset, defaults to file in package for grch37.'
+            'Can use "grch38" for table in package for newer genome build, or'
+            'provide a path to a similarly constructed file')
     args = parser.parse_args()
 
     try:
