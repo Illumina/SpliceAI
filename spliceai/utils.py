@@ -4,6 +4,7 @@ import numpy as np
 import re
 import pyfasta
 from keras.models import load_model
+from spliceai.normalise_chrom import normalise_chrom
 
 
 class annotator():
@@ -26,7 +27,7 @@ class annotator():
         self.models = [load_model(resource_filename(__name__, x)) for x in paths]
 
     def get_name_and_strand(self, chrom, pos):
-
+        chrom = normalise_chrom(chrom, self.chroms[0])
         idxs = np.intersect1d(
                    np.nonzero(self.chroms == chrom)[0],
                    np.intersect1d(np.nonzero(self.tx_starts <= pos)[0],
@@ -88,12 +89,9 @@ def get_delta_scores(record, ann, L=1001):
             alt_len = len(record.alts[j])
             del_len = max(ref_len-alt_len, 0)
             
-            try:
-                seq = ann.ref_fasta[record.chrom][
-                                    record.pos-W//2-1:record.pos+W//2]
-            except:
-                seq = ann.ref_fasta['chr'+str(record.chrom)][
-                                    record.pos-W//2-1:record.pos+W//2]                
+            chrom = normalise_chrom(record.chrom, list(ann.ref_fasta.keys())[0])
+            seq = ann.ref_fasta[chrom][
+                                record.pos-W//2-1:record.pos+W//2]
 
             x_ref = 'N'*pad_size[0]+seq[pad_size[0]:W-pad_size[1]]\
                      +'N'*pad_size[1]
@@ -155,4 +153,3 @@ def get_delta_scores(record, ann, L=1001):
                 idx_nD-L//2))
 
     return delta_scores
-
