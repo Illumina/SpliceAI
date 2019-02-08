@@ -36,9 +36,11 @@ Options:
   predictions for each gene. Variants outside gene regions are not scored.
  - **-R**: Reference genome fasta file (should be on hg19/GRCh37 if using
   default -A parameter).
- - **-A**: Optional tab-separated file with columns for gene symbol, chromosome,
-  strand, transcription start, and transcription end. See
-  `spliceai/annotations/GENCODE.v24lift37` in repository as template for
+ - **-A**: Annotations file. Defaults to `grch37`. Can use `grch37` or `grch38`
+  for annotations included with SpliceAI package. Otherwise takes a path
+  to a tab-separated file with columns for gene symbol, chromosome, strand,
+  transcription start, and transcription end. See
+  `spliceai/annotations/grch37.txt` in repository as template for
   creating custom annotations).
 
 Details of SpliceAI INFO field:

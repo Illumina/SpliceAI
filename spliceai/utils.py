@@ -10,8 +10,10 @@ class annotator():
 
     def __init__(self, ref_fasta, annotations):
 
-        if annotations is None:
-            annotations = resource_filename(__name__, 'annotations/GENCODE.v24lift37')
+        if annotations == 'grch37':
+            annotations = resource_filename(__name__, 'annotations/grch37.txt')
+        elif annotations == 'grch38':
+            annotations = resource_filename(__name__, 'annotations/grch38.txt')
         df = pd.read_csv(annotations, sep='\t')
 
         self.genes = df['#NAME'].get_values()
