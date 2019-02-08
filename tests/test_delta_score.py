@@ -9,7 +9,7 @@ class TestDeltaScore(unittest.TestCase):
     @classmethod
     def setUpClass(self):
         fasta_path = resource_filename(__name__, 'data/test.fa')
-        self.ann = annotator(fasta_path, None)
+        self.ann = annotator(fasta_path, 'grch37')
 
     def test_get_delta_score_acceptor(self):
         ''' test get_delta_scores for a predicted acceptor

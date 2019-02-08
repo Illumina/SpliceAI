@@ -2,7 +2,7 @@ from pkg_resources import resource_filename
 import pandas as pd
 import numpy as np
 import re
-import pyfasta
+from pyfaidx import Fasta
 from keras.models import load_model
 from spliceai.normalise_chrom import normalise_chrom
 
@@ -11,8 +11,10 @@ class annotator():
 
     def __init__(self, ref_fasta, annotations):
 
-        if annotations is None:
-            annotations = resource_filename(__name__, 'annotations/GENCODE.v24lift37')
+        if annotations == 'grch37':
+            annotations = resource_filename(__name__, 'annotations/grch37.txt')
+        elif annotations == 'grch38':
+            annotations = resource_filename(__name__, 'annotations/grch38.txt')
         df = pd.read_csv(annotations, sep='\t')
 
         self.genes = df['#NAME'].get_values()
@@ -21,7 +23,7 @@ class annotator():
         self.tx_starts = df['TX_START'].get_values()+1
         self.tx_ends = df['TX_END'].get_values()
 
-        self.ref_fasta = pyfasta.Fasta(ref_fasta)
+        self.ref_fasta = Fasta(ref_fasta)
 
         paths = ('models/spliceai{}.h5'.format(x) for x in range(1, 6))
         self.models = [load_model(resource_filename(__name__, x)) for x in paths]
@@ -91,7 +93,7 @@ def get_delta_scores(record, ann, L=1001):
             
             chrom = normalise_chrom(record.chrom, list(ann.ref_fasta.keys())[0])
             seq = ann.ref_fasta[chrom][
-                                record.pos-W//2-1:record.pos+W//2]
+                                record.pos-W//2-1:record.pos+W//2].seq
 
             x_ref = 'N'*pad_size[0]+seq[pad_size[0]:W-pad_size[1]]\
                      +'N'*pad_size[1]
