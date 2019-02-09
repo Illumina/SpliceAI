@@ -32,8 +32,7 @@ class TestDeltaScore(unittest.TestCase):
 
         # check when the fasta lacks chr prefixes, but the variant has them
         fasta_path = resource_filename(__name__, 'data/test_without_prefix.fa')
-        ann = annotator(fasta_path, None)
-        scores = get_delta_scores(record, ann)
+        scores = get_delta_scores(record, self.ann)
         self.assertEqual(scores , ['T|TUBB8|0.01|0.18|0.15|0.62|-2|110|-190|0'])
 
         # check it works when fasta and variant both have chr prefix
