@@ -24,6 +24,9 @@ spliceai -I input.vcf -O output.vcf -R genome.fa -A annotations.txt
 # or you can pipe the input and output VCFs
 cat input.vcf | spliceai -R genome.fa -A annotations.txt > output.vcf
 ```
+**Note**: The annotations for all possible SNVs within genes are available [here](https://basespace.illumina.com/s/5u6ThOblecrh) for download.
+
+
 Options:
  - **-I**: Input VCF with variants of interest.
  - **-O**: Output VCF with SpliceAI predictions `SpliceAI=ALLELE|SYMBOL|DS_AG|DS_AL|DS_DG|DS_DL|DP_AG|DP_AL|DP_DG|DP_DL` included in the INFO column (see table below for details). Only SNVs and simple INDELs (ref or alt must be a single base) within genes are annotated. Variants in multiple genes have separate predictions for each gene.
@@ -46,8 +49,6 @@ Details of SpliceAI INFO field:
 |  DP_DL   | Delta position (donor loss) |
 
 **Delta score** of a variant ranges from 0 to 1, and can be interpreted as the probability of the variant being splice-altering. In the paper, a detailed characterization is provided for 0.2 (high recall/likely pathogenic), 0.5 (recommended/pathogenic), and 0.8 (high precision/pathogenic) cutoffs. **Delta position** conveys information about the location where splicing changes relative to the variant position (positive values are upstream of the variant, negative values are downstream).
-
-The annotations for all possible SNVs within genes are available [here](https://basespace.illumina.com/s/5u6ThOblecrh) for download.
 
 ### Examples
 A sample input file and the corresponding output file can be found at `examples/input.vcf` and `examples/output.vcf` respectively (`grch37` annotation). The output `SpliceAI=T|RYR1|0.22|0.00|0.91|0.70|-107|-46|-2|90` for the variant `19:38958362 C>T` can be interpreted as follows:
