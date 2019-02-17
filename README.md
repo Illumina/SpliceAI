@@ -26,7 +26,7 @@ cat input.vcf | spliceai -R genome.fa -A annotations.txt > output.vcf
 ```
 Options:
  - **-I**: Input VCF with variants of interest.
- - **-O**: Output VCF with SpliceAI predictions `SpliceAI=ALLELE|SYMBOL|DS_AG|DS_AL|DS_DG|DS_DL|DP_AG|DP_AL|DP_DG|DP_DL` included in the INFO column (see table below for details). Only SNVs and simple INDELS (ref or alt must be a single base) within genes are annotated. Variants in multiple genes have separate predictions for each gene.
+ - **-O**: Output VCF with SpliceAI predictions `SpliceAI=ALLELE|SYMBOL|DS_AG|DS_AL|DS_DG|DS_DL|DP_AG|DP_AL|DP_DG|DP_DL` included in the INFO column (see table below for details). Only SNVs and simple INDELs (ref or alt must be a single base) within genes are annotated. Variants in multiple genes have separate predictions for each gene.
  - **-R**: Reference genome fasta file.
  - **-A**: Gene annotation file. Can instead provide `grch37` or `grch38` to use GENCODE canonical annotation files included with the package. To create custom annotation files, use `spliceai/annotations/grch37.txt` in repository as template.
 
