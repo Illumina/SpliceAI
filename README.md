@@ -19,10 +19,10 @@ SpliceAI requires [tensorflow](https://www.tensorflow.org/install/)>=1.2.0, whic
 ### Usage
 SpliceAI can be run from the command line:
 ```sh
-spliceai -I input.vcf -O output.vcf -R genome.fa -A annotations.txt
+spliceai -I input.vcf -O output.vcf -R genome.fa -A grch37
 
 # or you can pipe the input and output VCFs
-cat input.vcf | spliceai -R genome.fa -A annotations.txt > output.vcf
+cat input.vcf | spliceai -R genome.fa -A grch37 > output.vcf
 ```
 
 Options:
