@@ -25,6 +25,8 @@ def get_options():
                         help='"grch37" (uses GENCODE canonical annotation file in package), '
                              '"grch38" (uses GENCODE canonical annotation file in package), '
                              'or path to a similarly-constructed custom gene annotation file')
+    parser.add_argument('--batch_size', type=int, default=32,
+                        help='batch_size: Integer. If unspecified, it will default to 32.')
     args = parser.parse_args()
 
     try:
@@ -51,7 +53,7 @@ def main():
                     'acceptor gain (AG), acceptor loss (AL), donor gain (DG), and donor loss (DL). '
                     'Format: ALLELE|SYMBOL|DS_AG|DS_AL|DS_DG|DS_DL|DP_AG|DP_AL|DP_DG|DP_DL">')
     output = pysam.VariantFile(args.O, mode='w', header=header)
-    ann = Annotator(args.R, args.A)
+    ann = Annotator(args.R, args.A, args.batch_size)
 
     for record in vcf:
 

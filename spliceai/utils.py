@@ -7,7 +7,9 @@ from keras.models import load_model
 
 class Annotator:
 
-    def __init__(self, ref_fasta, annotations):
+    def __init__(self, ref_fasta, annotations, batch_size):
+
+        self.batch_size = batch_size
 
         if annotations == 'grch37':
             annotations = resource_filename(__name__, 'annotations/grch37.txt')
@@ -120,8 +122,8 @@ def get_delta_scores(record, ann, cov=1001):
                 x_ref = x_ref[:, ::-1, ::-1]
                 x_alt = x_alt[:, ::-1, ::-1]
 
-            y_ref = np.mean([ann.models[m].predict(x_ref) for m in range(5)], axis=0)
-            y_alt = np.mean([ann.models[m].predict(x_alt) for m in range(5)], axis=0)
+            y_ref = np.mean([ann.models[m].predict(x_ref, batch_size=ann.batch_size) for m in range(5)], axis=0)
+            y_alt = np.mean([ann.models[m].predict(x_alt, batch_size=ann.batch_size) for m in range(5)], axis=0)
 
             if strands[i] == '-':
                 y_ref = y_ref[:, ::-1]
