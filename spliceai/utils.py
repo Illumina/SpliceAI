@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 from pyfaidx import Fasta
 from keras.models import load_model
+import logging
 
 
 class Annotator:
@@ -22,16 +23,16 @@ class Annotator:
             self.tx_starts = df['TX_START'].get_values()+1
             self.tx_ends = df['TX_END'].get_values()
         except IOError:
-            print('Gene annotation file {} not found, exiting.'.format(annotations))
+            logging.error('Gene annotation file {} not found, exiting.'.format(annotations))
             exit()
         except KeyError:
-            print('Gene annotation file {} format incorrect, exiting.'.format(annotations))
+            logging.error('Gene annotation file {} format incorrect, exiting.'.format(annotations))
             exit()
 
         try:
             self.ref_fasta = Fasta(ref_fasta)
         except IOError:
-            print('Reference genome fasta file {} not found, exiting.'.format(ref_fasta))
+            logging.error('Reference genome fasta file {} not found, exiting.'.format(ref_fasta))
             exit()
 
         paths = ('models/spliceai{}.h5'.format(x) for x in range(1, 6))
@@ -93,7 +94,7 @@ def get_delta_scores(record, ann, cov=1001):
     try:
         record.chrom, record.pos, record.ref, len(record.alts)
     except TypeError:
-        print('Skipping record (bad input): {}'.format(record))
+        logging.warning('Skipping record (bad input): {}'.format(record))
         return delta_scores
 
     (genes, strands, idxs) = ann.get_name_and_strand(record.chrom, record.pos)
@@ -104,11 +105,11 @@ def get_delta_scores(record, ann, cov=1001):
     try:
         seq = ann.ref_fasta[chrom][record.pos-wid//2-1:record.pos+wid//2].seq
     except (IndexError, ValueError):
-        print('Skipping record (fasta issue): {}'.format(record))
+        logging.warning('Skipping record (fasta issue): {}'.format(record))
         return delta_scores
 
     if seq[wid//2:wid//2+len(record.ref)].upper() != record.ref:
-        print('Skipping record (ref issue): {}'.format(record))
+        logging.warning('Skipping record (ref issue): {}'.format(record))
         return delta_scores
 
     for j in range(len(record.alts)):

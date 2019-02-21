@@ -36,8 +36,7 @@ def main():
 
     try:
         vcf = pysam.VariantFile(args.I)
-    except IOError:
-        print('Input VCF file {} not found, exiting.'.format(args.I))
+    except (IOError, ValueError):
         exit()
 
     header = vcf.header
@@ -48,8 +47,7 @@ def main():
 
     try:
         output = pysam.VariantFile(args.O, mode='w', header=header)
-    except IOError:
-        print('Unable to create output VCF file {}, exiting.'.format(args.O))
+    except (IOError, ValueError):
         exit()
 
     ann = Annotator(args.R, args.A)
