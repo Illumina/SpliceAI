@@ -27,16 +27,6 @@ def get_options():
                              'or path to a similarly-constructed custom gene annotation file')
     args = parser.parse_args()
 
-    try:
-        args.I = open(args.I, 'rt')
-    except TypeError:
-        pass
-
-    try:
-        args.O = open(args.O, 'wt')
-    except TypeError:
-        pass
-
     return args
 
 
@@ -44,21 +34,34 @@ def main():
 
     args = get_options()
 
-    vcf = pysam.VariantFile(args.I)
+    try:
+        vcf = pysam.VariantFile(args.I)
+    except IOError:
+        print('Input VCF file {} not found, exiting.'.format(args.I))
+        exit()
+
     header = vcf.header
-    header.add_line('##INFO=<ID=SpliceAI,Number=.,Type=String,Description="SpliceAIv1.2 variant '
+    header.add_line('##INFO=<ID=SpliceAI,Number=.,Type=String,Description="SpliceAIv1.2.1 variant '
                     'annotation. These include delta scores (DS) and delta positions (DP) for '
                     'acceptor gain (AG), acceptor loss (AL), donor gain (DG), and donor loss (DL). '
                     'Format: ALLELE|SYMBOL|DS_AG|DS_AL|DS_DG|DS_DL|DP_AG|DP_AL|DP_DG|DP_DL">')
-    output = pysam.VariantFile(args.O, mode='w', header=header)
+
+    try:
+        output = pysam.VariantFile(args.O, mode='w', header=header)
+    except IOError:
+        print('Unable to create output VCF file {}, exiting.'.format(args.O))
+        exit()
+
     ann = Annotator(args.R, args.A)
 
     for record in vcf:
-
         scores = get_delta_scores(record, ann)
         if len(scores) > 0:
             record.info['SpliceAI'] = scores
         output.write(record)
+
+    vcf.close()
+    output.close()
 
 
 if __name__ == '__main__':

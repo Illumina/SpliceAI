@@ -13,15 +13,26 @@ class Annotator:
             annotations = resource_filename(__name__, 'annotations/grch37.txt')
         elif annotations == 'grch38':
             annotations = resource_filename(__name__, 'annotations/grch38.txt')
-        df = pd.read_csv(annotations, sep='\t', dtype={'CHROM': object})
 
-        self.genes = df['#NAME'].get_values()
-        self.chroms = df['CHROM'].get_values()
-        self.strands = df['STRAND'].get_values()
-        self.tx_starts = df['TX_START'].get_values()+1
-        self.tx_ends = df['TX_END'].get_values()
+        try:
+            df = pd.read_csv(annotations, sep='\t', dtype={'CHROM': object})
+            self.genes = df['#NAME'].get_values()
+            self.chroms = df['CHROM'].get_values()
+            self.strands = df['STRAND'].get_values()
+            self.tx_starts = df['TX_START'].get_values()+1
+            self.tx_ends = df['TX_END'].get_values()
+        except IOError:
+            print('Gene annotation file {} not found, exiting.'.format(annotations))
+            exit()
+        except KeyError:
+            print('Gene annotation file {} format incorrect, exiting.'.format(annotations))
+            exit()
 
-        self.ref_fasta = Fasta(ref_fasta)
+        try:
+            self.ref_fasta = Fasta(ref_fasta)
+        except IOError:
+            print('Reference genome fasta file {} not found, exiting.'.format(ref_fasta))
+            exit()
 
         paths = ('models/spliceai{}.h5'.format(x) for x in range(1, 6))
         self.models = [load_model(resource_filename(__name__, x)) for x in paths]
@@ -82,16 +93,22 @@ def get_delta_scores(record, ann, cov=1001):
     try:
         record.chrom, record.pos, record.ref, len(record.alts)
     except TypeError:
+        print('Skipping record (bad input): {}'.format(record))
         return delta_scores
 
     (genes, strands, idxs) = ann.get_name_and_strand(record.chrom, record.pos)
-    if len(idxs) == 0 or len(record.ref) >= cov//2 or record.ref == '.':
+    if len(idxs) == 0:
         return delta_scores
 
     chrom = normalise_chrom(record.chrom, list(ann.ref_fasta.keys())[0])
     try:
         seq = ann.ref_fasta[chrom][record.pos-wid//2-1:record.pos+wid//2].seq
-    except IndexError:
+    except (IndexError, ValueError):
+        print('Skipping record (fasta issue): {}'.format(record))
+        return delta_scores
+
+    if seq[wid//2:wid//2+len(record.ref)].upper() != record.ref:
+        print('Skipping record (ref issue): {}'.format(record))
         return delta_scores
 
     for j in range(len(record.alts)):
