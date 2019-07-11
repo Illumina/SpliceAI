@@ -25,6 +25,8 @@ def get_options():
                         help='"grch37" (uses GENCODE canonical annotation file in package), '
                              '"grch38" (uses GENCODE canonical annotation file in package), '
                              'or path to a similarly-constructed custom gene annotation file')
+    parser.add_argument('-C', type=int, default=500,
+                        help='Range around the variant SpliceAI looks for changes')
     args = parser.parse_args()
 
     return args
@@ -52,8 +54,10 @@ def main():
 
     ann = Annotator(args.R, args.A)
 
+    cov = args.C * 2 + 1
+
     for record in vcf:
-        scores = get_delta_scores(record, ann)
+        scores = get_delta_scores(record, ann, cov)
         if len(scores) > 0:
             record.info['SpliceAI'] = scores
         output.write(record)
