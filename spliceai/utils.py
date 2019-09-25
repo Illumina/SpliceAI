@@ -30,9 +30,9 @@ class Annotator:
             exit()
 
         try:
-            self.ref_fasta = Fasta(ref_fasta)
-        except IOError:
-            logging.error('Reference genome fasta file {} not found, exiting.'.format(ref_fasta))
+            self.ref_fasta = Fasta(ref_fasta, rebuild=False)
+        except IOError as e:
+            logging.error('Error reading reference genome file ({}): {}'.format(ref_fasta, e))
             exit()
 
         paths = ('models/spliceai{}.h5'.format(x) for x in range(1, 6))
