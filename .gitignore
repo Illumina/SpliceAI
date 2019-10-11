@@ -5,5 +5,3 @@ build/
 dist/
 *.egg-info/
 .eggs/
-*.flat
-*.gdx
