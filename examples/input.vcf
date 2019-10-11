@@ -1,5 +1,6 @@
-##fileformat=VCFv4.0
-##assembly=GRCh37/hg19
+##fileformat=VCFv4.2
+##fileDate=20191004
+##reference=GRCh37/hg19
 ##contig=<ID=1,length=249250621>
 ##contig=<ID=2,length=243199373>
 ##contig=<ID=3,length=198022430>
@@ -25,13 +26,13 @@
 ##contig=<ID=X,length=155270560>
 ##contig=<ID=Y,length=59373566>
 #CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO
+1	25000	.	A	C,G,T	.	.	.
+2	152389953	.	T	A,C,G	.	.	.
+2	179415988	.	C	CA	.	.	.
+2	179446218	.	ATACT	A	.	.	.
+2	179446218	.	ATACT	AT,ATA	.	.	.
 2	179642185	.	G	A	.	.	.
 19	38958362	.	C	T	.	.	.
-2	152389953	.	T	A,C,G	.	.	.
-X	129274636	.	A	C,G,T	.	.	.
-2	179446218	.	ATACT	A	.	.	.
-2	179415988	.	C	CA	.	.	.
 21	47406854	.	CCA	C	.	.	.
 21	47406856	.	A	AT	.	.	.
-1	25000	.	A	C,G,T	.	.	.
-2	179446218	.	ATACT	AT,ATA	.	.	.
+X	129274636	.	A	C,G,T	.	.	.

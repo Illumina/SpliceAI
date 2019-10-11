@@ -1,6 +1,7 @@
 from pkg_resources import resource_filename
 import pandas as pd
 import numpy as np
+import re
 from pyfaidx import Fasta
 from keras.models import load_model
 import logging
@@ -22,17 +23,19 @@ class Annotator:
             self.strands = df['STRAND'].get_values()
             self.tx_starts = df['TX_START'].get_values()+1
             self.tx_ends = df['TX_END'].get_values()
-        except IOError:
-            logging.error('Gene annotation file {} not found, exiting.'.format(annotations))
+            self.exon_starts = [np.asarray(map(int, re.split(',', c)[:-1]))+1 for c in df['EXON_START'].get_values()]
+            self.exon_ends = [np.asarray(map(int, re.split(',', c)[:-1])) for c in df['EXON_END'].get_values()]
+        except IOError as e:
+            logging.error('Error reading gene annotation file ({}): {}'.format(annotations, e))
             exit()
-        except KeyError:
-            logging.error('Gene annotation file {} format incorrect, exiting.'.format(annotations))
+        except (KeyError, pd.errors.ParserError) as e:
+            logging.error('Gene annotation file ({}) not formatted properly: {}'.format(annotations, e))
             exit()
 
         try:
             self.ref_fasta = Fasta(ref_fasta, rebuild=False)
         except IOError as e:
-            logging.error('Error reading reference genome file ({}): {}'.format(ref_fasta, e))
+            logging.error('Error reading reference genome fasta file ({}): {}'.format(ref_fasta, e))
             exit()
 
         paths = ('models/spliceai{}.h5'.format(x) for x in range(1, 6))
@@ -54,9 +57,10 @@ class Annotator:
 
         dist_tx_start = self.tx_starts[idx]-pos
         dist_tx_end = self.tx_ends[idx]-pos
-        dist = (dist_tx_start, dist_tx_end)
+        dist_exon_bdry = min(np.union1d(self.exon_starts[idx], self.exon_ends[idx])-pos, key=abs)
+        dist_ann = (dist_tx_start, dist_tx_end, dist_exon_bdry)
 
-        return dist
+        return dist_ann
 
 
 def one_hot_encode(seq):
@@ -86,8 +90,9 @@ def normalise_chrom(source, target):
     return source
 
 
-def get_delta_scores(record, ann, cov=1001):
+def get_delta_scores(record, ann, dist_var, mask):
 
+    cov = 2*dist_var+1
     wid = 10000+cov
     delta_scores = []
 
@@ -122,8 +127,8 @@ def get_delta_scores(record, ann, cov=1001):
                 delta_scores.append("{}|{}|.|.|.|.|.|.|.|.".format(record.alts[j], genes[i]))
                 continue
 
-            dist = ann.get_pos_data(idxs[i], record.pos)
-            pad_size = [max(wid//2+dist[0], 0), max(wid//2-dist[1], 0)]
+            dist_ann = ann.get_pos_data(idxs[i], record.pos)
+            pad_size = [max(wid//2+dist_ann[0], 0), max(wid//2-dist_ann[1], 0)]
             ref_len = len(record.ref)
             alt_len = len(record.alts[j])
             del_len = max(ref_len-alt_len, 0)
@@ -165,13 +170,18 @@ def get_delta_scores(record, ann, cov=1001):
             idx_pd = (y[1, :, 2]-y[0, :, 2]).argmax()
             idx_nd = (y[0, :, 2]-y[1, :, 2]).argmax()
 
+            mask_pa = np.logical_and((idx_pa-cov//2 == dist_ann[2]), mask)
+            mask_na = np.logical_and((idx_na-cov//2 != dist_ann[2]), mask)
+            mask_pd = np.logical_and((idx_pd-cov//2 == dist_ann[2]), mask)
+            mask_nd = np.logical_and((idx_nd-cov//2 != dist_ann[2]), mask)
+
             delta_scores.append("{}|{}|{:.2f}|{:.2f}|{:.2f}|{:.2f}|{}|{}|{}|{}".format(
                                 record.alts[j],
                                 genes[i],
-                                y[1, idx_pa, 1]-y[0, idx_pa, 1],
-                                y[0, idx_na, 1]-y[1, idx_na, 1],
-                                y[1, idx_pd, 2]-y[0, idx_pd, 2],
-                                y[0, idx_nd, 2]-y[1, idx_nd, 2],
+                                (y[1, idx_pa, 1]-y[0, idx_pa, 1])*(1-mask_pa),
+                                (y[0, idx_na, 1]-y[1, idx_na, 1])*(1-mask_na),
+                                (y[1, idx_pd, 2]-y[0, idx_pd, 2])*(1-mask_pd),
+                                (y[0, idx_nd, 2]-y[1, idx_nd, 2])*(1-mask_nd),
                                 idx_pa-cov//2,
                                 idx_na-cov//2,
                                 idx_pd-cov//2,

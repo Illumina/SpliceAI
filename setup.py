@@ -1,12 +1,12 @@
-import io
 from setuptools import setup
+import io
 
 
 setup(name='spliceai',
       description='SpliceAI: A deep learning-based tool to identify splice variants',
       long_description=io.open('README.md', encoding='utf-8').read(),
       long_description_content_type='text/markdown',
-      version='1.2.1',
+      version='1.3',
       author='Kishore Jaganathan',
       author_email='kishorejaganathan@gmail.com',
       license='GPLv3',
