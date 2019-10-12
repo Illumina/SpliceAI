@@ -28,16 +28,16 @@ class Annotator:
             self.exon_ends = [np.asarray(list(map(int, re.split(',', c)[:-1])))
                               for c in df['EXON_END'].get_values()]
         except IOError as e:
-            logging.error('Error reading gene annotation file ({}): {}'.format(annotations, e))
+            logging.error('Error reading gene annotation file {}: {}'.format(annotations, e))
             exit()
         except (KeyError, pd.errors.ParserError) as e:
-            logging.error('Gene annotation file ({}) not formatted properly: {}'.format(annotations, e))
+            logging.error('Gene annotation file {} not formatted properly: {}'.format(annotations, e))
             exit()
 
         try:
             self.ref_fasta = Fasta(ref_fasta, rebuild=False)
         except IOError as e:
-            logging.error('Error reading reference genome fasta file ({}): {}'.format(ref_fasta, e))
+            logging.error('Error reading reference genome fasta file {}: {}'.format(ref_fasta, e))
             exit()
 
         paths = ('models/spliceai{}.h5'.format(x) for x in range(1, 6))

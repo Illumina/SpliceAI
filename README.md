@@ -10,8 +10,7 @@ This package annotates genetic variants with their predicted effect on splicing,
 The simplest way to install SpliceAI is through pip or conda:
 ```sh
 pip install spliceai
-
-#or
+# or
 conda install -c bioconda spliceai
 ```
 
@@ -28,7 +27,6 @@ SpliceAI requires [tensorflow](https://www.tensorflow.org/install/)>=1.2.0, whic
 SpliceAI can be run from the command line:
 ```sh
 spliceai -I input.vcf -O output.vcf -R genome.fa -A grch37
-
 # or you can pipe the input and output VCFs
 cat input.vcf | spliceai -R genome.fa -A grch37 > output.vcf
 ```
