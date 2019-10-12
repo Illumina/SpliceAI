@@ -25,12 +25,14 @@ def get_options():
                         help='"grch37" (GENCODE V24lift37 canonical annotation file in '
                              'package), "grch38" (GENCODE V24 canonical annotation file in '
                              'package), or path to a similar custom gene annotation file')
-    parser.add_argument('-D', metavar='distance', nargs='?', default=50, type=int,
+    parser.add_argument('-D', metavar='distance', nargs='?', default=50,
+                        type=int, choices=range(0, 5000),
                         help='maximum distance between the variant and gained/lost splice '
                              'site, defaults to 50')
-    parser.add_argument('-M', metavar='mask', nargs='?', default=False, type=bool,
+    parser.add_argument('-M', metavar='mask', nargs='?', default=0,
+                        type=int, choices=[0, 1],
                         help='mask scores representing annotated acceptor/donor gain and '
-                             'unannotated acceptor/donor loss, defaults to False')
+                             'unannotated acceptor/donor loss, defaults to 0')
     args = parser.parse_args()
 
     return args
