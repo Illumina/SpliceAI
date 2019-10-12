@@ -60,6 +60,11 @@ def main():
 
     ann = Annotator(args.R, args.A)
 
+    if args.D is None:
+        args.D = 50
+    if args.M is None:
+        args.M = 0
+
     for record in vcf:
         scores = get_delta_scores(record, ann, args.D, args.M)
         if len(scores) > 0:
