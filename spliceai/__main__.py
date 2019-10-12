@@ -1,5 +1,6 @@
 import sys
 import argparse
+import logging
 import pysam
 from spliceai.utils import Annotator, get_delta_scores
 
@@ -42,6 +43,11 @@ def main():
 
     args = get_options()
 
+    if None in [args.I, args.O, args.D, args.M]:
+        logging.error('Usage: spliceai [-h] [-I [input]] [-O [output]] -R reference -A annotation '
+                      '[-D [distance]] [-M [mask]]')
+        exit()
+
     try:
         vcf = pysam.VariantFile(args.I)
     except (IOError, ValueError):
@@ -59,11 +65,6 @@ def main():
         exit()
 
     ann = Annotator(args.R, args.A)
-
-    if args.D is None:
-        args.D = 50
-    if args.M is None:
-        args.M = 0
 
     for record in vcf:
         scores = get_delta_scores(record, ann, args.D, args.M)
