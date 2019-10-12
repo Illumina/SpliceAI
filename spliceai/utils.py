@@ -23,8 +23,10 @@ class Annotator:
             self.strands = df['STRAND'].get_values()
             self.tx_starts = df['TX_START'].get_values()+1
             self.tx_ends = df['TX_END'].get_values()
-            self.exon_starts = [np.asarray(map(int, re.split(',', c)[:-1]))+1 for c in df['EXON_START'].get_values()]
-            self.exon_ends = [np.asarray(map(int, re.split(',', c)[:-1])) for c in df['EXON_END'].get_values()]
+            self.exon_starts = [np.asarray(list(map(int, re.split(',', c)[:-1])))+1
+                                for c in df['EXON_START'].get_values()]
+            self.exon_ends = [np.asarray(list(map(int, re.split(',', c)[:-1])))
+                              for c in df['EXON_END'].get_values()]
         except IOError as e:
             logging.error('Error reading gene annotation file ({}): {}'.format(annotations, e))
             exit()
