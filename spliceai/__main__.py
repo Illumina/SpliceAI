@@ -50,7 +50,8 @@ def main():
 
     try:
         vcf = pysam.VariantFile(args.I)
-    except (IOError, ValueError):
+    except (IOError, ValueError) as e:
+        logging.error('{}'.format(e))
         exit()
 
     header = vcf.header
@@ -61,7 +62,8 @@ def main():
 
     try:
         output = pysam.VariantFile(args.O, mode='w', header=header)
-    except (IOError, ValueError):
+    except (IOError, ValueError) as e:
+        logging.error('{}'.format(e))
         exit()
 
     ann = Annotator(args.R, args.A)
