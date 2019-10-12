@@ -1,6 +1,6 @@
 ## SpliceAI: A deep learning-based tool to identify splice variants
 [![Downloads](https://pepy.tech/badge/spliceai)](https://pepy.tech/project/spliceai)
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-red.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-green.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 This package annotates genetic variants with their predicted effect on splicing, as described in [Jaganathan *et al*, Cell 2019 in press](https://doi.org/10.1016/j.cell.2018.12.015).
 
