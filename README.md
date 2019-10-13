@@ -22,7 +22,12 @@ cd SpliceAI
 python setup.py install
 ```
 
-SpliceAI requires [tensorflow](https://www.tensorflow.org/install/)>=1.2.0, which is best installed separately via pip: `pip install tensorflow`. See the TensorFlow website for other installation options.
+SpliceAI requires ```tensorflow>=1.2.0```, which is best installed separately via pip or conda (see the [TensorFlow](https://www.tensorflow.org/) website for other installation options):
+```sh
+pip install tensorflow
+# or
+conda install tensorflow
+```
 
 ### Usage
 SpliceAI can be run from the command line:
@@ -35,7 +40,7 @@ cat input.vcf | spliceai -R genome.fa -A grch37 > output.vcf
 Required parameters:
  - ```-I```: Input VCF with variants of interest.
  - ```-O```: Output VCF with SpliceAI predictions `ALLELE|SYMBOL|DS_AG|DS_AL|DS_DG|DS_DL|DP_AG|DP_AL|DP_DG|DP_DL` included in the INFO column (see table below for details). Only SNVs and simple INDELs (REF or ALT is a single base) within genes are annotated. Variants in multiple genes have separate predictions for each gene.
- - ```-R```: Reference genome fasta file (for example: [GRCh37/hg19](http://hgdownload.cse.ucsc.edu/goldenPath/hg19/bigZips/hg19.fa.gz), [GRCh38/hg38](http://hgdownload.cse.ucsc.edu/goldenPath/hg38/bigZips/hg38.fa.gz)).
+ - ```-R```: Reference genome fasta file. Can be downloaded from [GRCh37/hg19](http://hgdownload.cse.ucsc.edu/goldenPath/hg19/bigZips/hg19.fa.gz) or [GRCh38/hg38](http://hgdownload.cse.ucsc.edu/goldenPath/hg38/bigZips/hg38.fa.gz).
  - ```-A```: Gene annotation file. Can instead provide `grch37` or `grch38` to use GENCODE V24 canonical annotation files included with the package. To create custom gene annotation files, use `spliceai/annotations/grch37.txt` in repository as template.
 
 Optional parameters:
@@ -57,12 +62,15 @@ Details of SpliceAI INFO field:
 |  DP_DG   | Delta position (donor gain) |
 |  DP_DL   | Delta position (donor loss) |
 
-Delta score of a variant ranges from 0 to 1, and can be interpreted as the probability of the variant being splice-altering. In the paper, a detailed characterization is provided for 0.2 (high recall/likely pathogenic), 0.5 (recommended/pathogenic), and 0.8 (high precision/pathogenic) cutoffs. Delta position conveys information about the location where splicing changes relative to the variant position (positive values are downstream of the variant, negative values are upstream).
+Delta score of a variant, defined as the maximum of (DS_AG, DS_AL, DS_DG, DS_DL), ranges from 0 to 1 and can be interpreted as the probability of the variant being splice-altering. In the paper, a detailed characterization is provided for 0.2 (high recall), 0.5 (recommended), and 0.8 (high precision) cutoffs. Delta position conveys information about the location where splicing changes relative to the variant position (positive values are downstream of the variant, negative values are upstream).
 
 ### Examples
-A sample input file and the corresponding output file can be found at `examples/input.vcf` and `examples/output.vcf` respectively (`grch37` annotation). The output `SpliceAI=T|RYR1|0.00|0.00|0.91|0.08|-28|-46|-2|-31` for the variant `19:38958362 C>T` can be interpreted as follows:
-* The probability that the position `19:38958360` is used as a splice donor increases by `0.91`.
-* The probability that the position `19:38958331` is used as a splice donor decreases by `0.08`.
+A sample input file and the corresponding output file can be found at `examples/input.vcf` and `examples/output.vcf` respectively. The output `T|RYR1|0.00|0.00|0.91|0.08|-28|-46|-2|-31` for the variant `19:38958362 C>T` can be interpreted as follows:
+* The probability that the position 19:38958360 (=38958362-2) is used as a splice donor increases by 0.91.
+* The probability that the position 19:38958331 (=38958362-31) is used as a splice donor decreases by 0.08.
 
+Similarly, the output `CA|TTN|0.07|1.00|0.00|0.00|-7|-1|35|-29` for the variant `2:179415988 C>CA` has the following interpretation:
+* The probability that the position 2:179415981 (=179415988-7) is used as a splice acceptor increases by 0.07.
+* The probability that the position 2:179415987 (=179415988-1) is used as a splice acceptor decreases by 1.00.
 ### Contact
 Kishore Jaganathan: kishorejaganathan@gmail.com
