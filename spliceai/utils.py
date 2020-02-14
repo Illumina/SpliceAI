@@ -18,15 +18,15 @@ class Annotator:
 
         try:
             df = pd.read_csv(annotations, sep='\t', dtype={'CHROM': object})
-            self.genes = df['#NAME'].get_values()
-            self.chroms = df['CHROM'].get_values()
-            self.strands = df['STRAND'].get_values()
-            self.tx_starts = df['TX_START'].get_values()+1
-            self.tx_ends = df['TX_END'].get_values()
+            self.genes = df['#NAME'].to_numpy()
+            self.chroms = df['CHROM'].to_numpy()
+            self.strands = df['STRAND'].to_numpy()
+            self.tx_starts = df['TX_START'].to_numpy()+1
+            self.tx_ends = df['TX_END'].to_numpy()
             self.exon_starts = [np.asarray(list(map(int, re.split(',', c)[:-1])))+1
-                                for c in df['EXON_START'].get_values()]
+                                for c in df['EXON_START'].to_numpy()]
             self.exon_ends = [np.asarray(list(map(int, re.split(',', c)[:-1])))
-                              for c in df['EXON_END'].get_values()]
+                              for c in df['EXON_END'].to_numpy()]
         except IOError as e:
             logging.error('{}'.format(e))
             exit()
