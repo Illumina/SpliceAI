@@ -190,3 +190,4 @@ def get_delta_scores(record, ann, dist_var, mask):
                                 idx_nd-cov//2))
 
     return delta_scores
+
