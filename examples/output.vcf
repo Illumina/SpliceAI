@@ -26,7 +26,7 @@
 ##contig=<ID=22,length=51304566>
 ##contig=<ID=X,length=155270560>
 ##contig=<ID=Y,length=59373566>
-##INFO=<ID=SpliceAI,Number=.,Type=String,Description="SpliceAIv1.3 variant annotation. These include delta scores (DS) and delta positions (DP) for acceptor gain (AG), acceptor loss (AL), donor gain (DG), and donor loss (DL). Format: ALLELE|SYMBOL|DS_AG|DS_AL|DS_DG|DS_DL|DP_AG|DP_AL|DP_DG|DP_DL">
+##INFO=<ID=SpliceAI,Number=.,Type=String,Description="SpliceAIv1.3.1 variant annotation. These include delta scores (DS) and delta positions (DP) for acceptor gain (AG), acceptor loss (AL), donor gain (DG), and donor loss (DL). Format: ALLELE|SYMBOL|DS_AG|DS_AL|DS_DG|DS_DL|DP_AG|DP_AL|DP_DG|DP_DL">
 #CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO
 1	25000	.	A	C,G,T	.	.	.
 2	152389953	.	T	A,C,G	.	.	SpliceAI=A|NEB|0.01|0.00|0.00|0.74|43|3|-26|3,C|NEB|0.04|0.00|0.00|0.71|43|3|-26|3,G|NEB|0.03|0.00|0.00|0.75|43|3|-26|3

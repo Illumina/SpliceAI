@@ -55,7 +55,7 @@ def main():
         exit()
 
     header = vcf.header
-    header.add_line('##INFO=<ID=SpliceAI,Number=.,Type=String,Description="SpliceAIv1.3 variant '
+    header.add_line('##INFO=<ID=SpliceAI,Number=.,Type=String,Description="SpliceAIv1.3.1 variant '
                     'annotation. These include delta scores (DS) and delta positions (DP) for '
                     'acceptor gain (AG), acceptor loss (AL), donor gain (DG), and donor loss (DL). '
                     'Format: ALLELE|SYMBOL|DS_AG|DS_AL|DS_DG|DS_DL|DP_AG|DP_AL|DP_DG|DP_DL">')

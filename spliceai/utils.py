@@ -119,10 +119,21 @@ def get_delta_scores(record, ann, dist_var, mask):
         logging.warning('Skipping record (ref issue): {}'.format(record))
         return delta_scores
 
+    if len(seq) != wid:
+        logging.warning('Skipping record (near chromosome end): {}'.format(record))
+        return delta_scores
+
+    if len(record.ref) > 2*dist_var:
+        logging.warning('Skipping record (ref too long): {}'.format(record))
+        return delta_scores
+
     for j in range(len(record.alts)):
         for i in range(len(idxs)):
 
-            if record.alts[j] == '<NON_REF>' or record.alts[j] == '.':
+            if '.' in record.alts[j] or '-' in record.alts[j] or '*' in record.alts[j]:
+                continue
+
+            if '<' in record.alts[j] or '>' in record.alts[j]:
                 continue
 
             if len(record.ref) > 1 and len(record.alts[j]) > 1:
