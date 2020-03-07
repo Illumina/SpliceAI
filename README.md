@@ -1,5 +1,5 @@
 ## SpliceAI: A deep learning-based tool to identify splice variants
-[![release](https://img.shields.io/badge/release-v1.3-orange.svg)](https://img.shields.io/badge/release-v1.3-orange.svg)
+[![release](https://img.shields.io/badge/release-v1.3.1-orange.svg)](https://img.shields.io/badge/release-v1.3.1-orange.svg)
 [![license](https://img.shields.io/badge/license-GPLv3-green.svg)](https://img.shields.io/badge/license-GPLv3-green.svg)
 [![downloads](https://pepy.tech/badge/spliceai)](https://pepy.tech/badge/spliceai)
 
