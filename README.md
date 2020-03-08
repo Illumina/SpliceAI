@@ -77,9 +77,9 @@ Similarly, the output `CA|TTN|0.07|1.00|0.00|0.00|-7|-1|35|-29` for the variant 
 
 **1. Why are some variants not scored by SpliceAI?**
 
-SpliceAI only annotates variants within genes defined by the gene annotation file. Additionally, SpliceAI does not annotate variants if they are close to chromosome ends (5kb on either side), deletions greater than twice the input parameter ```-D```, or inconsistent with the reference fasta file.
+SpliceAI only annotates variants within genes defined by the gene annotation file. Additionally, SpliceAI does not annotate variants if they are close to chromosome ends (5kb on either side), deletions of length greater than twice the input parameter ```-D```, or inconsistent with the reference fasta file.
 
-**2. What are the differences between raw (```-M 0```) and masked (```-M 1```) files?**
+**2. What are the differences between raw (```-M 0```) and masked (```-M 1```) precomputed files?**
 
 The raw files also include splicing changes corresponding to strengthening annotated splice sites and weakening unannotated splice sites, which are typically much less pathogenic than weakening annotated splice sites and strengthening unannotated splice sites. The delta scores of such splicing changes are set to 0 in the masked files. We recommend using raw files for alternative splicing analysis and masked files for variant interpretation.
 
