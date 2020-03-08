@@ -72,5 +72,39 @@ A sample input file and the corresponding output file can be found at `examples/
 Similarly, the output `CA|TTN|0.07|1.00|0.00|0.00|-7|-1|35|-29` for the variant `2:179415988 C>CA` has the following interpretation:
 * The probability that the position 2:179415981 (=179415988-7) is used as a splice acceptor increases by 0.07.
 * The probability that the position 2:179415987 (=179415988-1) is used as a splice acceptor decreases by 1.00.
+
+### Frequently asked questions
+
+**1. Why are some variants not scored by SpliceAI?**
+
+SpliceAI only annotates variants within genes defined by the gene annotation file. Additionally, SpliceAI does not annotate variants if they are close to chromosome ends (5kb on either side), deletions greater than twice the input parameter ```-D```, or inconsistent with the reference fasta file.
+
+**2. What are the differences between raw (```-M 0```) and masked (```-M 1```) files?**
+
+The raw files also include splicing changes corresponding to strengthening annotated splice sites and weakening unannotated splice sites, which are typically much less pathogenic than weakening annotated splice sites and strengthening unannotated splice sites. The delta scores of such splicing changes are set to 0 in the masked files. We recommend using raw files for alternative splicing analysis and masked files for variant interpretation.
+
+**3. Can SpliceAI be used to score custom sequences?**
+
+Yes, install SpliceAI and use the following script:  
+
+```python
+from keras.models import load_model
+from pkg_resources import resource_filename
+from spliceai.utils import one_hot_encode
+import numpy as np
+
+input_sequence = 'CGATCTGACGTGGGTGTCATCGCATTATCGATATTGCAT'
+# Replace this with your custom sequence
+
+context = 10000
+paths = ('models/spliceai{}.h5'.format(x) for x in range(1, 6))
+models = [load_model(resource_filename('spliceai', x)) for x in paths]
+x = one_hot_encode('N'*(context//2) + input_sequence + 'N'*(context//2))[None, :]
+y = np.mean([models[m].predict(x) for m in range(5)], axis=0)
+
+acceptor_prob = y[0, :, 1]
+donor_prob = y[0, :, 2]
+```
+
 ### Contact
 Kishore Jaganathan: kishorejaganathan@gmail.com
