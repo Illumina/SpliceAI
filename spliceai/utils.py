@@ -92,62 +92,63 @@ def normalise_chrom(source, target):
     return source
 
 
-def get_delta_scores(record, ann, dist_var, mask):
-
+def get_delta_scores(record_data, ann, dist_var, mask):
     cov = 2*dist_var+1
     wid = 10000+cov
     delta_scores = []
 
+    _, chrom, pos, ref, alts, record_str = record_data
+
     try:
-        record.chrom, record.pos, record.ref, len(record.alts)
+        len(alts)
     except TypeError:
-        logging.warning('Skipping record (bad input): {}'.format(record))
+        logging.warning('Skipping record (bad input): {}'.format(record_str))
         return delta_scores
 
-    (genes, strands, idxs) = ann.get_name_and_strand(record.chrom, record.pos)
+    (genes, strands, idxs) = ann.get_name_and_strand(chrom, pos)
     if len(idxs) == 0:
         return delta_scores
 
-    chrom = normalise_chrom(record.chrom, list(ann.ref_fasta.keys())[0])
+    chrom = normalise_chrom(chrom, list(ann.ref_fasta.keys())[0])
     try:
-        seq = ann.ref_fasta[chrom][record.pos-wid//2-1:record.pos+wid//2].seq
+        seq = ann.ref_fasta[chrom][pos-wid//2-1:pos+wid//2].seq
     except (IndexError, ValueError):
-        logging.warning('Skipping record (fasta issue): {}'.format(record))
+        logging.warning('Skipping record (fasta issue): {}'.format(record_str))
         return delta_scores
 
-    if seq[wid//2:wid//2+len(record.ref)].upper() != record.ref:
-        logging.warning('Skipping record (ref issue): {}'.format(record))
+    if seq[wid//2:wid//2+len(ref)].upper() != ref:
+        logging.warning('Skipping record (ref issue): {}'.format(record_str))
         return delta_scores
 
     if len(seq) != wid:
-        logging.warning('Skipping record (near chromosome end): {}'.format(record))
+        logging.warning('Skipping record (near chromosome end): {}'.format(record_str))
         return delta_scores
 
-    if len(record.ref) > 2*dist_var:
-        logging.warning('Skipping record (ref too long): {}'.format(record))
+    if len(ref) > 2*dist_var:
+        logging.warning('Skipping record (ref too long): {}'.format(record_str))
         return delta_scores
 
-    for j in range(len(record.alts)):
+    for j in range(len(alts)):
         for i in range(len(idxs)):
 
-            if '.' in record.alts[j] or '-' in record.alts[j] or '*' in record.alts[j]:
+            if '.' in alts[j] or '-' in alts[j] or '*' in alts[j]:
                 continue
 
-            if '<' in record.alts[j] or '>' in record.alts[j]:
+            if '<' in alts[j] or '>' in alts[j]:
                 continue
 
-            if len(record.ref) > 1 and len(record.alts[j]) > 1:
-                delta_scores.append("{}|{}|.|.|.|.|.|.|.|.".format(record.alts[j], genes[i]))
+            if len(ref) > 1 and len(alts[j]) > 1:
+                delta_scores.append("{}|{}|.|.|.|.|.|.|.|.".format(alts[j], genes[i]))
                 continue
 
-            dist_ann = ann.get_pos_data(idxs[i], record.pos)
+            dist_ann = ann.get_pos_data(idxs[i], pos)
             pad_size = [max(wid//2+dist_ann[0], 0), max(wid//2-dist_ann[1], 0)]
-            ref_len = len(record.ref)
-            alt_len = len(record.alts[j])
+            ref_len = len(ref)
+            alt_len = len(alts[j])
             del_len = max(ref_len-alt_len, 0)
 
             x_ref = 'N'*pad_size[0]+seq[pad_size[0]:wid-pad_size[1]]+'N'*pad_size[1]
-            x_alt = x_ref[:wid//2]+str(record.alts[j])+x_ref[wid//2+ref_len:]
+            x_alt = x_ref[:wid//2]+str(alts[j])+x_ref[wid//2+ref_len:]
 
             x_ref = one_hot_encode(x_ref)[None, :]
             x_alt = one_hot_encode(x_alt)[None, :]
@@ -189,7 +190,7 @@ def get_delta_scores(record, ann, dist_var, mask):
             mask_nd = np.logical_and((idx_nd-cov//2 != dist_ann[2]), mask)
 
             delta_scores.append("{}|{}|{:.2f}|{:.2f}|{:.2f}|{:.2f}|{}|{}|{}|{}".format(
-                                record.alts[j],
+                                alts[j],
                                 genes[i],
                                 (y[1, idx_pa, 1]-y[0, idx_pa, 1])*(1-mask_pa),
                                 (y[0, idx_na, 1]-y[1, idx_na, 1])*(1-mask_na),
@@ -201,4 +202,3 @@ def get_delta_scores(record, ann, dist_var, mask):
                                 idx_nd-cov//2))
 
     return delta_scores
-

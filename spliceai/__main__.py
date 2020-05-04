@@ -1,7 +1,9 @@
-import sys
 import argparse
 import logging
+from multiprocessing import Process, JoinableQueue, Queue, cpu_count
+
 import pysam
+
 from spliceai.utils import Annotator, get_delta_scores
 
 
@@ -39,8 +41,27 @@ def get_options():
     return args
 
 
-def main():
+class Worker(Process):
+    def __init__(self, records_queue, scores_queue, cli_args):
+        Process.__init__(self)
+        self.records_queue = records_queue
+        self.scores_queue = scores_queue
+        self.cli_args = cli_args
 
+    def run(self):
+        ann = Annotator(self.cli_args.R, self.cli_args.A)
+        while True:
+            record_data = self.records_queue.get()
+            if record_data is None:
+                self.records_queue.task_done()
+                break
+
+            scores = get_delta_scores(record_data, ann, self.cli_args.D, self.cli_args.M)
+            self.scores_queue.put((record_data[0], scores))
+            self.records_queue.task_done()
+
+
+def main():
     args = get_options()
 
     if None in [args.I, args.O, args.D, args.M]:
@@ -54,6 +75,30 @@ def main():
         logging.error('{}'.format(e))
         exit()
 
+    records_queue = JoinableQueue()
+    scores_queue = Queue(200)
+    for i in range(cpu_count()):
+        proc = Worker(records_queue, scores_queue, args)
+        proc.start()
+
+    index = 0
+    for record in vcf:
+        record_data = (index, record.chrom, record.pos, record.ref, record.alts, str(record))
+        records_queue.put(record_data)
+        index += 1
+    vcf.close()
+
+    for i in range(cpu_count()):
+        records_queue.put(None)
+    records_queue.join()
+
+    scores = []
+    while not scores_queue.empty():
+        scores.append(scores_queue.get())
+    scores = [score for index, score in sorted(scores, key=lambda item: item[0])]
+    print(scores)
+
+    vcf = pysam.VariantFile(args.I)
     header = vcf.header
     header.add_line('##INFO=<ID=SpliceAI,Number=.,Type=String,Description="SpliceAIv1.3.1 variant '
                     'annotation. These include delta scores (DS) and delta positions (DP) for '
@@ -66,13 +111,12 @@ def main():
         logging.error('{}'.format(e))
         exit()
 
-    ann = Annotator(args.R, args.A)
-
+    index = 0
     for record in vcf:
-        scores = get_delta_scores(record, ann, args.D, args.M)
-        if len(scores) > 0:
-            record.info['SpliceAI'] = scores
+        if len(scores[index]) > 0:
+            record.info['SpliceAI'] = scores[index]
         output.write(record)
+        index += 1
 
     vcf.close()
     output.close()
