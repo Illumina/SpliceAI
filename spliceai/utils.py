@@ -1,7 +1,6 @@
 from pkg_resources import resource_filename
 import pandas as pd
 import numpy as np
-import re
 from pyfaidx import Fasta
 from keras.models import load_model
 import logging
@@ -23,9 +22,9 @@ class Annotator:
             self.strands = df['STRAND'].to_numpy()
             self.tx_starts = df['TX_START'].to_numpy()+1
             self.tx_ends = df['TX_END'].to_numpy()
-            self.exon_starts = [np.asarray(list(map(int, re.split(',', c)[:-1])))+1
+            self.exon_starts = [np.asarray([int(i) for i in c.split(',') if i])+1
                                 for c in df['EXON_START'].to_numpy()]
-            self.exon_ends = [np.asarray(list(map(int, re.split(',', c)[:-1])))
+            self.exon_ends = [np.asarray([int(i) for i in c.split(',') if i])
                               for c in df['EXON_END'].to_numpy()]
         except IOError as e:
             logging.error('{}'.format(e))
