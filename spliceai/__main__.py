@@ -15,7 +15,7 @@ except ImportError:
 
 def get_options():
 
-    parser = argparse.ArgumentParser(description='Version: 1.3')
+    parser = argparse.ArgumentParser(description='Version: 1.3.1')
     parser.add_argument('-I', metavar='input', nargs='?', default=std_in,
                         help='path to the input VCF file, defaults to standard in')
     parser.add_argument('-O', metavar='output', nargs='?', default=std_out,
