@@ -2,7 +2,7 @@ import sys
 import argparse
 import logging
 import pysam
-from spliceai.utils import Annotator, get_delta_scores
+from spliceai.utils import Annotator, GffAnnotator, get_delta_scores
 
 
 try:
@@ -25,7 +25,8 @@ def get_options():
     parser.add_argument('-A', metavar='annotation', required=True,
                         help='"grch37" (GENCODE V24lift37 canonical annotation file in '
                              'package), "grch38" (GENCODE V24 canonical annotation file in '
-                             'package), or path to a similar custom gene annotation file')
+                             'package), or path to a similar custom gene annotation file '
+                             'or path to a bgzip/tabix indexed GFF annotation file')
     parser.add_argument('-D', metavar='distance', nargs='?', default=50,
                         type=int, choices=range(0, 5000),
                         help='maximum distance between the variant and gained/lost splice '
@@ -66,7 +67,10 @@ def main():
         logging.error('{}'.format(e))
         exit()
 
-    ann = Annotator(args.R, args.A)
+    if args.A.endswith('.gff.gz'):
+        ann = GffAnnotator(args.R, args.A)
+    else:
+        ann = Annotator(args.R, args.A)
 
     for record in vcf:
         scores = get_delta_scores(record, ann, args.D, args.M)

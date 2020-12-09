@@ -1,0 +1,4 @@
+##fileformat=VCFv4.3
+##contig=<ID=10,length=135534747>
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO
+10	94077	.	A	C	.	.	.

@@ -2,6 +2,7 @@ from pkg_resources import resource_filename
 import pandas as pd
 import numpy as np
 from pyfaidx import Fasta
+from pysam import TabixFile
 from keras.models import load_model
 import logging
 
@@ -59,6 +60,96 @@ class Annotator:
         dist_tx_start = self.tx_starts[idx]-pos
         dist_tx_end = self.tx_ends[idx]-pos
         dist_exon_bdry = min(np.union1d(self.exon_starts[idx], self.exon_ends[idx])-pos, key=abs)
+        dist_ann = (dist_tx_start, dist_tx_end, dist_exon_bdry)
+
+        return dist_ann
+
+
+class GffAnnotator:
+    # only features with this type are consider for scoring
+    # also, exons for these features will be pulled using the "Parent" info key
+    feature_types = ['mRNA']
+    feature_exon = 'exon'
+    features = None
+    exons = None
+
+    # loading models as class attributes so we only load them once
+    models = [
+        load_model(resource_filename(__name__, x), compile=False)
+        for x in ('models/spliceai{}.h5'.format(x) for x in range(1, 6))
+    ]
+
+    def __init__(self, ref_fasta, annotations):
+        try:
+            self.ref_fasta = Fasta(ref_fasta, rebuild=False)
+        except IOError as e:
+            logging.error('{}'.format(e))
+            exit()
+
+        try:
+            self.gff_annotations = TabixFile(annotations)
+        except IOError as e:
+            logging.error('{}'.format(e))
+            exit()
+
+        self.target = next(self.gff_annotations.fetch()).split('\t')[0]
+
+    def get_name_and_strand(self, chrom, pos):
+        def parse_line(line):
+            contig, _, feature_type, start, end, _, strand, _, info = line.split('\t')
+
+            # split the info field into a key/value dictionary
+            info = dict(field.split('=') for field in info.split(';'))
+
+            return contig, feature_type, int(start), int(end), strand, info
+
+        chrom = normalise_chrom(chrom, self.target)
+
+        # fetch features that overlap the requested chrom/pos
+        self.features = {}
+        self.exons = {}
+        transcripts = []
+        strands = []
+        idxs = []
+        for f in self.gff_annotations.fetch(chrom, pos):
+            f_contig, f_feature_type, f_start, f_end, f_strand, f_info = parse_line(f)
+
+            transcrip_id = f_info['ID']
+
+            if f_feature_type in self.feature_types:
+                self.features[transcrip_id] = {
+                    'start': f_start,
+                    'end': f_end,
+                    'strand': f_strand,
+                }
+
+                # build the symbol that will go in the output (ex. "GENE:TUBB8;NAME:NM_177987.3")
+                # default to the required ID info field if we didn't find gene or name
+                symbol = ";".join([f"{k.upper()}:{f_info[k]}" for k in ['gene', 'Name'] if k in f_info])
+                if symbol == '':
+                    symbol = transcrip_id
+
+                transcripts.append(symbol)
+                strands.append(f_strand)
+                idxs.append(transcrip_id)
+
+                # init the transcript exons starts/ends
+                self.exons[transcrip_id] = {'starts': [], 'ends': []}
+
+                # fetch features overlapping the transcript
+                for c in self.gff_annotations.fetch(f_contig, f_start, f_end):
+                    _, c_feature_type, c_start, c_end, _, c_info = parse_line(c)
+                    # add start/end for exons linked to the parent transcript
+                    if c_feature_type == self.feature_exon and c_info.get('Parent') == transcrip_id:
+                        self.exons[transcrip_id]['starts'].append(c_start)
+                        self.exons[transcrip_id]['ends'].append(c_end)
+
+        return transcripts, strands, idxs
+
+    def get_pos_data(self, idx, pos):
+        dist_tx_start = self.features[idx]['start'] - pos
+        dist_tx_end = self.features[idx]['end'] - pos
+        dist_exon_bdry = min(np.union1d(self.exons[idx]['starts'], self.exons[idx]['ends']) - pos, key=abs)
         dist_ann = (dist_tx_start, dist_tx_end, dist_exon_bdry)
 
         return dist_ann
