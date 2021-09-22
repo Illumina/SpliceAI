@@ -6,6 +6,7 @@ from keras.models import load_model
 from samwell.overlap_detector import OverlapDetector
 from samwell.overlap_detector import Interval
 import logging
+import time
 
 
 class Annotator:
@@ -18,9 +19,7 @@ class Annotator:
 
         try:
             df = pd.read_csv(annotations, sep='\t', dtype={'CHROM': object})
-            self.genes = df['#NAME'].to_numpy()
             self.chroms = df['CHROM'].to_numpy()
-            self.strands = df['STRAND'].to_numpy()
             self.tx_starts = df['TX_START'].to_numpy()+1
             self.tx_ends = df['TX_END'].to_numpy()
             self.exon_starts = [np.asarray([int(i) for i in c.split(',') if i])+1
@@ -29,7 +28,6 @@ class Annotator:
                               for c in df['EXON_END'].to_numpy()]
             self.tx_overlap_detector = OverlapDetector()
             self.gene_to_index = {}
-            logging.error("being modified!")
             for i, (chrom, start, end, strand, name) in enumerate(
                 zip(df['CHROM'], df['TX_START'], df['TX_END'], df['STRAND'], df['#NAME'])
             ):
@@ -61,7 +59,6 @@ class Annotator:
         self.models = [load_model(resource_filename(__name__, x)) for x in paths]
 
     def get_name_and_strand(self, chrom, pos):
-
         chrom = normalise_chrom(chrom, list(self.chroms)[0])
         overlaps = self.tx_overlap_detector.get_overlaps(
             Interval(
@@ -74,7 +71,6 @@ class Annotator:
         genes = [overlap.name for overlap in overlaps]
         strands = ["-" if overlap.negative else "+" for overlap in overlaps]
         idxs = [self.gene_to_index[overlap.name] for overlap in overlaps]
-
         return genes, strands, idxs
 
     def get_pos_data(self, idx, pos):
