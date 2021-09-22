@@ -6,7 +6,6 @@ from keras.models import load_model
 from samwell.overlap_detector import OverlapDetector
 from samwell.overlap_detector import Interval
 import logging
-import time
 
 
 class Annotator:
