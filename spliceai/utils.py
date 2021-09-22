@@ -3,11 +3,12 @@ import pandas as pd
 import numpy as np
 from pyfaidx import Fasta
 from keras.models import load_model
+from samwell.overlap_detector import OverlapDetector
+from samwell.overlap_detector import Interval
 import logging
 
 
 class Annotator:
-
     def __init__(self, ref_fasta, annotations):
 
         if annotations == 'grch37':
@@ -26,6 +27,23 @@ class Annotator:
                                 for c in df['EXON_START'].to_numpy()]
             self.exon_ends = [np.asarray([int(i) for i in c.split(',') if i])
                               for c in df['EXON_END'].to_numpy()]
+            self.tx_overlap_detector = OverlapDetector()
+            self.gene_to_index = {}
+            logging.error("being modified!")
+            for i, (chrom, start, end, strand, name) in enumerate(
+                zip(df['CHROM'], df['TX_START'], df['TX_END'], df['STRAND'], df['#NAME'])
+            ):
+                self.tx_overlap_detector.add(
+                    Interval(
+                        refname=chrom,
+                        start=start,
+                        end=end,
+                        negative=strand == "-",
+                        name=name,
+                    )
+                )
+                self.gene_to_index[name] = i
+
         except IOError as e:
             logging.error('{}'.format(e))
             exit()
@@ -45,14 +63,19 @@ class Annotator:
     def get_name_and_strand(self, chrom, pos):
 
         chrom = normalise_chrom(chrom, list(self.chroms)[0])
-        idxs = np.intersect1d(np.nonzero(self.chroms == chrom)[0],
-                              np.intersect1d(np.nonzero(self.tx_starts <= pos)[0],
-                              np.nonzero(pos <= self.tx_ends)[0]))
+        overlaps = self.tx_overlap_detector.get_overlaps(
+            Interval(
+                refname=chrom,
+                start=pos - 1,
+                end=pos,
+            )
+        )
 
-        if len(idxs) >= 1:
-            return self.genes[idxs], self.strands[idxs], idxs
-        else:
-            return [], [], []
+        genes = [overlap.name for overlap in overlaps]
+        strands = ["-" if overlap.negative else "+" for overlap in overlaps]
+        idxs = [self.gene_to_index[overlap.name] for overlap in overlaps]
+
+        return genes, strands, idxs
 
     def get_pos_data(self, idx, pos):
 
