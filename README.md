@@ -62,15 +62,23 @@ Details of SpliceAI INFO field:
 |  DP_AL   | Delta position (acceptor loss) |
 |  DP_DG   | Delta position (donor gain) |
 |  DP_DL   | Delta position (donor loss) |
+|  DS_AG_REF   | Reference score (acceptor gain) |
+|  DS_AG_ALT   | Variant score (acceptor gain) |
+|  DS_AL_REF   | Reference score (acceptor loss) |
+|  DS_AL_ALT   | Variant score (acceptor loss) |
+|  DS_DG_REF   | Reference score (donor gain) |
+|  DS_DG_ALT   | Variant score (donor gain) |
+|  DS_DL_REF   | Reference score (donor loss) |
+|  DS_DL_ALT   | Variant score (donor loss) |
 
 Delta score of a variant, defined as the maximum of (DS_AG, DS_AL, DS_DG, DS_DL), ranges from 0 to 1 and can be interpreted as the probability of the variant being splice-altering. In the paper, a detailed characterization is provided for 0.2 (high recall), 0.5 (recommended), and 0.8 (high precision) cutoffs. Delta position conveys information about the location where splicing changes relative to the variant position (positive values are downstream of the variant, negative values are upstream).
 
 ### Examples
-A sample input file and the corresponding output file can be found at `examples/input.vcf` and `examples/output.vcf` respectively. The output `T|RYR1|0.00|0.00|0.91|0.08|-28|-46|-2|-31` for the variant `19:38958362 C>T` can be interpreted as follows:
+A sample input file and the corresponding output file can be found at `examples/input.vcf` and `examples/output.vcf` respectively. The output `T|RYR1|0.00|0.00|0.91|0.08|-28|-46|-2|-31|0.00|0.00|0.00|0.00|0.08|0.99|0.08|0.00` for the variant `19:38958362 C>T` can be interpreted as follows:
 * The probability that the position 19:38958360 (=38958362-2) is used as a splice donor increases by 0.91.
 * The probability that the position 19:38958331 (=38958362-31) is used as a splice donor decreases by 0.08.
 
-Similarly, the output `CA|TTN|0.07|1.00|0.00|0.00|-7|-1|35|-29` for the variant `2:179415988 C>CA` has the following interpretation:
+Similarly, the output `CA|TTN|0.07|1.00|0.00|0.00|-7|-1|35|-29|0.00|0.07|1.00|0.00|0.00|0.00|0.00|0.00` for the variant `2:179415988 C>CA` has the following interpretation:
 * The probability that the position 2:179415981 (=179415988-7) is used as a splice acceptor increases by 0.07.
 * The probability that the position 2:179415987 (=179415988-1) is used as a splice acceptor decreases by 1.00.
 
