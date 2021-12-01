@@ -1,9 +1,13 @@
+# Original source code modified to add prediction batching support by Invitae in 2021.
+# Modifications copyright (c) 2021 Invitae Corporation.
+
 import sys
 import argparse
 import logging
 import pysam
-from spliceai.utils import Annotator, get_delta_scores
 
+from spliceai.batch.batch import VCFPredictionBatch
+from spliceai.utils import Annotator, get_delta_scores
 
 try:
     from sys.stdin import buffer as std_in
@@ -34,22 +38,46 @@ def get_options():
                         type=int, choices=[0, 1],
                         help='mask scores representing annotated acceptor/donor gain and '
                              'unannotated acceptor/donor loss, defaults to 0')
+    parser.add_argument('-B', '--prediction-batch-size', metavar='prediction_batch_size', default=1, type=int,
+                        help='number of predictions to process at a time, note a single vcf record '
+                             'may have multiple predictions for overlapping genes and multiple alts')
+    parser.add_argument('-T', '--tensorflow-batch-size', metavar='tensorflow_batch_size', type=int,
+                        help='tensorflow batch size for model predictions')
+    parser.add_argument('-V', '--verbose', action='store_true', help='enables verbose logging')
     args = parser.parse_args()
 
     return args
 
 
 def main():
-
     args = get_options()
+
+    if args.verbose:
+        logging.basicConfig(
+            format='%(asctime)s %(levelname)s %(name)s: - %(message)s',
+            datefmt='%Y-%m-%d %H:%M:%S',
+            level=logging.DEBUG,
+        )
 
     if None in [args.I, args.O, args.D, args.M]:
         logging.error('Usage: spliceai [-h] [-I [input]] [-O [output]] -R reference -A annotation '
-                      '[-D [distance]] [-M [mask]]')
+                      '[-D [distance]] [-M [mask]] [-B [prediction_batch_size]] [-T [tensorflow_batch_size]]')
         exit()
 
+    # Default the tensorflow batch size to the prediction_batch_size if it's not supplied in the args
+    tensorflow_batch_size = args.tensorflow_batch_size if args.tensorflow_batch_size else args.prediction_batch_size
+
+    run_spliceai(input_data=args.I, output_data=args.O, reference=args.R,
+                 annotation=args.A, distance=args.D, mask=args.M,
+                 prediction_batch_size=args.prediction_batch_size,
+                 tensorflow_batch_size=tensorflow_batch_size)
+
+
+def run_spliceai(input_data, output_data, reference, annotation, distance, mask, prediction_batch_size,
+                 tensorflow_batch_size):
+
     try:
-        vcf = pysam.VariantFile(args.I)
+        vcf = pysam.VariantFile(input_data)
     except (IOError, ValueError) as e:
         logging.error('{}'.format(e))
         exit()
@@ -61,21 +89,43 @@ def main():
                     'Format: ALLELE|SYMBOL|DS_AG|DS_AL|DS_DG|DS_DL|DP_AG|DP_AL|DP_DG|DP_DL">')
 
     try:
-        output = pysam.VariantFile(args.O, mode='w', header=header)
+        output_data = pysam.VariantFile(output_data, mode='w', header=header)
     except (IOError, ValueError) as e:
         logging.error('{}'.format(e))
         exit()
 
-    ann = Annotator(args.R, args.A)
+    ann = Annotator(reference, annotation)
+    batch = None
+
+    # Only use the batching code if we are batching
+    if prediction_batch_size > 1:
+        batch = VCFPredictionBatch(
+            ann=ann,
+            output=output_data,
+            dist=distance,
+            mask=mask,
+            prediction_batch_size=prediction_batch_size,
+            tensorflow_batch_size=tensorflow_batch_size,
+        )
 
     for record in vcf:
-        scores = get_delta_scores(record, ann, args.D, args.M)
-        if len(scores) > 0:
-            record.info['SpliceAI'] = scores
-        output.write(record)
+        if batch:
+            # Add record to batch, if batch fills, then they will all be processed at once
+            batch.add_record(record)
+        else:
+            # If we're not batching, let's run the original code
+            scores = get_delta_scores(record, ann, distance, mask)
+            if len(scores) > 0:
+                record.info['SpliceAI'] = scores
+            output_data.write(record)
+
+    if batch:
+        # Ensure we process any leftover records in the batch when we finish iterating the VCF. This
+        # would be a good candidate for a context manager if we removed the original non batching code above
+        batch.finish()
 
     vcf.close()
-    output.close()
+    output_data.close()
 
 
 if __name__ == '__main__':
