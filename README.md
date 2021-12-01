@@ -47,6 +47,21 @@ Required parameters:
 Optional parameters:
  - ```-D```: Maximum distance between the variant and gained/lost splice site (default: 50).
  - ```-M```: Mask scores representing annotated acceptor/donor gain and unannotated acceptor/donor loss (default: 0).
+ - ```-B```: Number of predictions to collect before running models on them in batch. (default: 1 (don't batch))
+ - ```-T```: Internal Tensorflow `predict()` batch size if you want something different from the `-B` value. (default: the `-B` value)
+ - ```-V```: Enable verbose logging during run
+
+**Batching Considerations:** When setting the batching parameters, be mindful of the system and gpu memory of the machine you 
+are running the script on. Feel free to experiment, but some reasonable `-B` numbers would be 64/128.
+
+Batching Performance Benchmarks:
+
+| Type     | Speed       |
+| -------- | ----------- |
+| n1-standard-2 CPU (GCP) | ~800 per hour |
+| CPU (2019 MacBook Pro) | ~3,000 per hour |
+| K80 GPU (GCP) | ~25,000 per hour |
+| V100 GPU (GCP) | ~150,000 per hour |
 
 Details of SpliceAI INFO field:
 
@@ -106,6 +121,17 @@ y = np.mean([models[m].predict(x) for m in range(5)], axis=0)
 acceptor_prob = y[0, :, 1]
 donor_prob = y[0, :, 2]
 ```
+
+### Modifications to Original
+
+**Batching Support** - Invitae (_December 2021_)
+
+* Adds new command line parameters, `--prediction-batch-size` and `--tensorflow-batch-size` to support batching variants to optimize prediction utilization on a GPU 
+* Adds a `VCFPredictionBatch` class that manages collection the VCF records, placing them in batches based on the encoded tensor size. Once the batch size is reached, predictions are run in batches, then output is written back in the original order reassembling the annotations for the VCF record. Each VCF record has a lookup key for where each of the ref/alts are within their batches, so it knows where to grab the results during reassembly
+* Breaks out code in the existing `get_delta_scores` method into reusable methods used in the batching and the original source code. This way the batching code can utilize the same logic inside that method while still maintaining the original version
+* Adds batch utility methods that split up what was all previously done in `get_delta_scores`. `encode_batch_record` handles what was in the first half, taking in the VCF record and generating one-hot encoded matrices for the ref/alts. `extract_delta_scores` handles the second half of the `get_delta_scores` by reassembling the annotations based on the batched predictions
+* Adds test cases to run a small file using a generated FASTA reference to test if the results are the same with no batching and with different batching sizes
+* Slightly modifies the entrypoint of running the code to allow for easier unit testing. Being able to pass in what would normally come from the argparser
 
 ### Contact
 Kishore Jaganathan: kjaganathan@illumina.com
