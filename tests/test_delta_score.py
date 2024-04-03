@@ -44,3 +44,17 @@ class TestDeltaScore(unittest.TestCase):
         self.assertEqual(scores, ['T|TUBB8|0.01|0.18|0.15|0.62|-2|110|-190|0'])
         scores = get_delta_scores(record, self.ann_without_prefix, 500, 0)
         self.assertEqual(scores, ['T|TUBB8|0.01|0.18|0.15|0.62|-2|110|-190|0'])
+
+    def test_get_delta_score_mnp(self):
+
+        record = Record('10', 94077, 'ACT', ['CCT'])
+        scores = get_delta_scores(record, self.ann, 50, 0)
+        self.assertEqual(scores, ['CCT|TUBB8|0.07|0.27|0.00|0.01|0|-23|19|-22'])
+        scores = get_delta_scores(record, self.ann_without_prefix, 50, 0)
+        self.assertEqual(scores, ['CCT|TUBB8|0.07|0.27|0.00|0.01|0|-23|19|-22'])
+
+        record = Record('10', 94555, 'CGA', ['TGA'])
+        scores = get_delta_scores(record, self.ann, 50, 0)
+        self.assertEqual(scores, ['TGA|TUBB8|0.01|0.00|0.11|0.62|-2|-6|-23|0'])
+        scores = get_delta_scores(record, self.ann_without_prefix, 50, 0)
+        self.assertEqual(scores, ['TGA|TUBB8|0.01|0.00|0.11|0.62|-2|-6|-23|0'])

@@ -135,10 +135,6 @@ def get_delta_scores(record, ann, dist_var, mask):
             if '<' in record.alts[j] or '>' in record.alts[j]:
                 continue
 
-            if len(record.ref) > 1 and len(record.alts[j]) > 1:
-                delta_scores.append("{}|{}|.|.|.|.|.|.|.|.".format(record.alts[j], genes[i]))
-                continue
-
             dist_ann = ann.get_pos_data(idxs[i], record.pos)
             pad_size = [max(wid//2+dist_ann[0], 0), max(wid//2-dist_ann[1], 0)]
             ref_len = len(record.ref)
@@ -172,6 +168,15 @@ def get_delta_scores(record, ann, dist_var, mask):
                 y_alt = np.concatenate([
                     y_alt[:, :cov//2],
                     np.max(y_alt[:, cov//2:cov//2+alt_len], axis=1)[:, None, :],
+                    y_alt[:, cov//2+alt_len:]],
+                    axis=1)
+            #MNP handling
+            elif ref_len > 1 and alt_len > 1:
+                zblock = np.zeros((1,ref_len-1,3))
+                y_alt = np.concatenate([
+                    y_alt[:, :cov//2],
+                    np.max(y_alt[:, cov//2:cov//2+alt_len], axis=1)[:, None, :],
+                    zblock,
                     y_alt[:, cov//2+alt_len:]],
                     axis=1)
 
