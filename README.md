@@ -7,6 +7,8 @@ This package annotates genetic variants with their predicted effect on splicing,
 ### License
 SpliceAI source code is provided under the [PolyForm Strict License 1.0.0](LICENSE). SpliceAI includes several third party packages provided under other open source licenses, please see [NOTICE](NOTICE) for additional details. The trained models used by SpliceAI (located in this package at spliceai/models) are provided under the [CC BY NC 4.0](LICENSE) license for academic and non-commercial use; other use requires a commercial license from Illumina, Inc.
 
+Purchase of AI scores and models for commercial use is available at [AI_licensing@illumina.com](mailto:AI_licensing@illumina.com) and will be delivered as a package through Illumina Connected Analytics software.
+
 ### Installation
 The simplest way to install SpliceAI is through pip or conda:
 ```sh
