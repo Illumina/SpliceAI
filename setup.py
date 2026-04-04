@@ -1,3 +1,6 @@
+# Original source code modified to add prediction batching support by Invitae in 2021.
+# Modifications copyright (c) 2021 Invitae Corporation.
+
 from setuptools import setup
 import io
 
@@ -11,7 +14,7 @@ setup(name='spliceai',
       author_email='kishorejaganathan@gmail.com',
       license='GPLv3',
       url='https://github.com/illumina/SpliceAI',
-      packages=['spliceai'],
+      packages=['spliceai', 'spliceai.batch'],
       install_requires=['keras>=2.0.5',
                         'pyfaidx>=0.5.0',
                         'pysam>=0.10.0',
